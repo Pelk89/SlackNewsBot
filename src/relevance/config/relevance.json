@@ -15,7 +15,7 @@
   "filtering": {
     "maxArticles": 8,
     "deduplicationSimilarity": 0.85,
-    "minWordCount": 50,
+    "minWordCount": 30,
     "languages": ["en", "de"]
   },
   "keywords": {
