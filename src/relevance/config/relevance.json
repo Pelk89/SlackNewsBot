@@ -13,7 +13,7 @@
     }
   },
   "filtering": {
-    "maxArticles": 8,
+    "maxArticles": 10,
     "deduplicationSimilarity": 0.85,
     "minWordCount": 30,
     "languages": ["en", "de"]
