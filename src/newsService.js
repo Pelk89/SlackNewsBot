@@ -1,9 +1,20 @@
 const SourceManager = require('./sources/SourceManager');
+const RelevanceEngine = require('./relevance/RelevanceEngine');
 
 class NewsService {
   constructor() {
     // Initialize SourceManager for multi-source aggregation
     this.sourceManager = new SourceManager();
+
+    // Initialize RelevanceEngine for intelligent filtering
+    try {
+      this.relevanceEngine = new RelevanceEngine();
+      console.log('✓ RelevanceEngine loaded successfully');
+    } catch (error) {
+      console.error('✗ Failed to initialize RelevanceEngine:', error.message);
+      console.log('→ Will fall back to basic scoring from SourceManager');
+      this.relevanceEngine = null;
+    }
 
     this.keywords = process.env.NEWS_KEYWORDS?.split(',').map(k => k.trim()) || [
       'retail innovation',
@@ -15,70 +26,46 @@ class NewsService {
   }
 
   /**
-   * DEPRECATED: Use SourceManager instead
-   * Kept for backward compatibility
-   */
-  async fetchGoogleNews(query) {
-    console.warn('fetchGoogleNews is deprecated. Use SourceManager instead.');
-    return [];
-  }
-
-  /**
-   * DEPRECATED: Moved to BaseSource
-   */
-  cleanDescription(text) {
-    return text
-      .replace(/<[^>]*>/g, '')
-      .replace(/&nbsp;/g, ' ')
-      .replace(/&quot;/g, '"')
-      .replace(/&amp;/g, '&')
-      .replace(/\s+/g, ' ')
-      .trim()
-      .substring(0, 200);
-  }
-
-  /**
-   * DEPRECATED: Moved to GoogleNewsSource
-   */
-  extractSource(title) {
-    const match = title.match(/- (.+)$/);
-    return match ? match[1] : 'Unknown Source';
-  }
-
-  /**
-   * DEPRECATED: Moved to Deduplicator
-   */
-  removeDuplicates(items) {
-    const seen = new Set();
-    return items.filter(item => {
-      const normalizedTitle = item.title.toLowerCase()
-        .replace(/[^a-z0-9\s]/g, '')
-        .substring(0, 50);
-
-      if (seen.has(normalizedTitle)) {
-        return false;
-      }
-      seen.add(normalizedTitle);
-      return true;
-    });
-  }
-
-  /**
-   * Fetch and aggregate news from all configured sources
-   * Uses SourceManager for multi-source aggregation, scoring, and diversification
-   * @returns {Promise<Array>} Aggregated, scored, and deduplicated news items
+   * Fetch and aggregate news from all configured sources with intelligent relevance filtering
+   * Combines SourceManager (multi-source) with RelevanceEngine (intelligent scoring)
+   * @returns {Promise<Array>} Aggregated, scored, filtered, and ranked news items
    */
   async fetchRetailInnovationNews() {
     try {
-      // Fetch from all sources using SourceManager
+      console.log(`→ Fetching news for keywords: ${this.keywords.join(', ')}`);
+
+      // Step 1: Fetch from all sources using SourceManager
       const allNews = await this.sourceManager.fetchAllNews(this.keywords);
+      console.log(`→ Fetched ${allNews.length} items from multiple sources`);
 
-      // Limit to max items
-      const limitedNews = allNews.slice(0, this.maxItems);
+      // Step 2: Apply RelevanceEngine if available for advanced filtering
+      let finalNews;
+      if (this.relevanceEngine) {
+        console.log('→ Applying RelevanceEngine for intelligent filtering...');
+        finalNews = await this.relevanceEngine.scoreAndFilter(allNews);
 
-      // Log statistics
-      const stats = this.sourceManager.getStats(limitedNews);
-      console.log(`→ News from ${stats.sources} different sources`);
+        // Log filtering stats
+        const stats = this.relevanceEngine.getFilteringStats(allNews, finalNews);
+        console.log(`→ Filtered: ${stats.filtered}/${stats.total} items (${stats.filterRate}% removed)`);
+        console.log(`→ Spam filtered: ${stats.spamFiltered}, Duplicates: ${stats.duplicatesFiltered}`);
+      } else {
+        // Fallback: use SourceManager's basic scoring
+        console.log('→ Using SourceManager basic scoring (RelevanceEngine unavailable)');
+        finalNews = allNews;
+      }
+
+      // Step 3: Limit to max items
+      const limitedNews = finalNews.slice(0, this.maxItems);
+
+      // Step 4: Log final statistics
+      const sourceStats = this.sourceManager.getStats(limitedNews);
+      console.log(`→ Final: ${limitedNews.length} news from ${sourceStats.sources} sources`);
+
+      if (limitedNews.length > 0 && limitedNews[0].relevance) {
+        const avgScore = limitedNews.reduce((sum, item) => sum + item.relevance.score, 0) / limitedNews.length;
+        console.log(`→ Avg relevance score: ${(avgScore * 100).toFixed(1)}%`);
+      }
+
       console.log(`✓ Returning ${limitedNews.length} top news items`);
 
       return limitedNews;
