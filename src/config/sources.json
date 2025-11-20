@@ -16,7 +16,7 @@
       "id": "newsapi",
       "name": "NewsAPI",
       "type": "newsapi",
-      "enabled": true,
+      "enabled": false,
       "priority": 2,
       "config": {
         "apiKey": "${NEWS_API_KEY}",
