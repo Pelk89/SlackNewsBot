@@ -1,5 +1,6 @@
 const Parser = require('rss-parser');
 const axios = require('axios');
+const RelevanceEngine = require('./relevance/RelevanceEngine');
 
 class NewsService {
   constructor() {
@@ -15,6 +16,15 @@ class NewsService {
       'retail technology'
     ];
     this.maxItems = parseInt(process.env.MAX_NEWS_ITEMS) || 10;
+
+    // Initialize RelevanceEngine
+    try {
+      this.relevanceEngine = new RelevanceEngine();
+      console.log('RelevanceEngine loaded successfully');
+    } catch (error) {
+      console.error('Failed to initialize RelevanceEngine:', error.message);
+      this.relevanceEngine = null;
+    }
   }
 
   /**
@@ -103,22 +113,38 @@ class NewsService {
       // Flatten and combine all results
       const allNews = newsResults.flat();
 
-      // Remove duplicates
-      const uniqueNews = this.removeDuplicates(allNews);
+      console.log(`Fetched ${allNews.length} raw news items`);
 
-      // Sort by publication date (newest first)
-      uniqueNews.sort((a, b) => {
-        const dateA = new Date(a.pubDate);
-        const dateB = new Date(b.pubDate);
-        return dateB - dateA;
-      });
+      // Use RelevanceEngine if available, otherwise fall back to basic filtering
+      if (this.relevanceEngine) {
+        console.log('Using RelevanceEngine for intelligent filtering and scoring...');
+        const scoredNews = await this.relevanceEngine.scoreAndFilter(allNews);
 
-      // Limit to max items
-      const limitedNews = uniqueNews.slice(0, this.maxItems);
+        // Log statistics
+        const stats = this.relevanceEngine.getFilteringStats(allNews, scoredNews);
+        console.log('Filtering Stats:', stats);
 
-      console.log(`Found ${limitedNews.length} unique news items`);
+        return scoredNews;
+      } else {
+        console.log('RelevanceEngine not available, using basic filtering...');
 
-      return limitedNews;
+        // Fallback: basic duplicate removal and sorting
+        const uniqueNews = this.removeDuplicates(allNews);
+
+        // Sort by publication date (newest first)
+        uniqueNews.sort((a, b) => {
+          const dateA = new Date(a.pubDate);
+          const dateB = new Date(b.pubDate);
+          return dateB - dateA;
+        });
+
+        // Limit to max items
+        const limitedNews = uniqueNews.slice(0, this.maxItems);
+
+        console.log(`Found ${limitedNews.length} unique news items`);
+
+        return limitedNews;
+      }
     } catch (error) {
       console.error('Error fetching retail innovation news:', error);
       throw error;

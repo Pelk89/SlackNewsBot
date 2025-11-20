@@ -1,0 +1,63 @@
+{
+  "scoring": {
+    "weights": {
+      "thematic": 0.40,
+      "authority": 0.25,
+      "timeliness": 0.20,
+      "innovation": 0.15
+    },
+    "thresholds": {
+      "minRelevanceScore": 0.5,
+      "minAuthorityScore": 0.4,
+      "maxAgeHours": 48
+    }
+  },
+  "filtering": {
+    "maxArticles": 8,
+    "deduplicationSimilarity": 0.85,
+    "minWordCount": 50,
+    "languages": ["en", "de"]
+  },
+  "keywords": {
+    "tier1": [
+      "autonomous delivery",
+      "last mile delivery",
+      "grocery automation",
+      "retail innovation",
+      "delivery robots",
+      "autonomous vehicles retail"
+    ],
+    "tier2": [
+      "retail technology",
+      "supply chain automation",
+      "e-grocery",
+      "logistics innovation",
+      "warehouse automation",
+      "delivery drones",
+      "robotics retail"
+    ],
+    "tier3": [
+      "retail",
+      "grocery",
+      "supermarket",
+      "food delivery",
+      "e-commerce",
+      "innovation"
+    ]
+  },
+  "sources": {
+    "authorityMap": {
+      "retaildive.com": 1.0,
+      "supplychaindive.com": 0.95,
+      "techcrunch.com": 0.9,
+      "bloomberg.com": 0.9,
+      "reuters.com": 0.85,
+      "theverge.com": 0.8,
+      "wired.com": 0.8,
+      "lebensmittelzeitung.net": 0.85,
+      "venturebeat.com": 0.8,
+      "news.google.com": 0.6,
+      "unknown": 0.4
+    }
+  }
+}

@@ -9,6 +9,22 @@ class SlackService {
   }
 
   /**
+   * Format relevance score as visual bar
+   * @param {number} score - Relevance score (0-1)
+   * @returns {string} Visual bar representation
+   */
+  formatRelevanceBar(score) {
+    const barLength = 10;
+    const filledLength = Math.round(score * barLength);
+    const emptyLength = barLength - filledLength;
+
+    const filled = '█'.repeat(filledLength);
+    const empty = '░'.repeat(emptyLength);
+
+    return filled + empty;
+  }
+
+  /**
    * Format news items into Slack message blocks
    * @param {Array} newsItems - Array of news items
    * @returns {Object} Slack message payload
@@ -54,6 +70,9 @@ class SlackService {
       };
     }
 
+    // Check if articles have relevance scores
+    const hasRelevanceScores = newsItems.length > 0 && newsItems[0].relevance;
+
     const blocks = [
       {
         type: 'header',
@@ -67,7 +86,9 @@ class SlackService {
         type: 'section',
         text: {
           type: 'mrkdwn',
-          text: `Good morning! Here are *${newsItems.length} top stories* about retail innovation, autonomous delivery, and last mile technology:`
+          text: hasRelevanceScores
+            ? `Good morning! Here are *${newsItems.length} top stories* about retail innovation, autonomous delivery, and last mile technology (relevance-filtered):`
+            : `Good morning! Here are *${newsItems.length} top stories* about retail innovation, autonomous delivery, and last mile technology:`
         }
       },
       {
@@ -85,11 +106,30 @@ class SlackService {
         minute: '2-digit'
       });
 
+      // Build the text content
+      let text = `*${index + 1}. <${item.link}|${item.title}>*\n${item.description}`;
+
+      // Add relevance information if available
+      if (item.relevance) {
+        const scorePercent = Math.round(item.relevance.score * 100);
+        const relevanceBar = this.formatRelevanceBar(item.relevance.score);
+
+        text += `\n\n📊 Relevance: ${relevanceBar} ${scorePercent}%`;
+
+        // Add reasoning if available
+        if (item.relevance.metadata?.reasoning) {
+          text += ` • _${item.relevance.metadata.reasoning}_`;
+        }
+      }
+
+      // Add source and date
+      text += `\n_${item.source} • ${formattedDate}_`;
+
       blocks.push({
         type: 'section',
         text: {
           type: 'mrkdwn',
-          text: `*${index + 1}. <${item.link}|${item.title}>*\n${item.description}\n_${item.source} • ${formattedDate}_`
+          text: text
         }
       });
 
