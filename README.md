@@ -4,7 +4,19 @@ A Slack bot that automatically delivers daily news summaries about retail innova
 
 ## Features
 
-- 📰 Automated daily news aggregation from Google News RSS feeds
+- 📰 **Multi-Source News Aggregation** - Combines news from multiple sources:
+  - Google News RSS feeds
+  - Retail-specific sources (Retail Dive, Supply Chain Dive, Retail TouchPoints)
+  - Tech sources (TechCrunch Logistics)
+  - **NewsAPI.org** - Access to 80,000+ sources (requires free API key)
+  - **X (Twitter)** - Real-time updates from retail industry accounts (optional)
+- 🎯 **Intelligent Scoring System** - Ranks news by relevance:
+  - Keyword match quality (40%)
+  - Source authority (30%)
+  - Freshness/recency (20%)
+  - Engagement metrics (10%)
+- 🔍 **Advanced Deduplication** - Smart duplicate detection across all sources
+- 🎨 **Source Diversification** - Prevents single-source dominance (max 3 per source)
 - 🔔 Scheduled delivery to Slack at 8 AM (configurable)
 - 🎯 Focused on retail innovation topics:
   - Retail Innovation
@@ -13,7 +25,6 @@ A Slack bot that automatically delivers daily news summaries about retail innova
   - Retail Technology
   - Grocery Innovation
 - 🐳 Docker support for easy deployment
-- 🔍 Smart deduplication to avoid repetitive content
 - 📊 REST API endpoints for manual triggers and monitoring
 - 🌍 Timezone support (default: Europe/Berlin)
 
@@ -150,7 +161,9 @@ The `CRON_SCHEDULE` uses standard cron syntax:
 - `0 8,17 * * *` - Every day at 8:00 AM and 5:00 PM
 - `30 7 * * *` - Every day at 7:30 AM
 
-## Customizing News Sources
+## Advanced Configuration
+
+### Customizing News Keywords
 
 Edit the `NEWS_KEYWORDS` in your `.env` file to customize what topics are searched:
 
@@ -158,23 +171,160 @@ Edit the `NEWS_KEYWORDS` in your `.env` file to customize what topics are search
 NEWS_KEYWORDS=retail innovation,autonomous delivery,grocery tech,ecommerce,supply chain automation
 ```
 
-The bot will search Google News for each keyword and aggregate the results.
+The bot will search all enabled sources for each keyword and aggregate the results.
+
+### NewsAPI Integration
+
+NewsAPI.org provides access to 80,000+ news sources and is **enabled by default** (requires API key):
+
+1. Create a free account at [NewsAPI.org](https://newsapi.org/)
+2. Copy your API key
+3. Add to `.env`:
+   ```env
+   NEWS_API_KEY=your_api_key_here
+   ```
+4. NewsAPI is already enabled in `src/config/sources.json`
+
+**Note:** Free tier allows 100 requests/day (sufficient for daily bot runs).
+
+### X (Twitter) Integration (Optional)
+
+Get real-time updates from retail industry Twitter accounts using Nitter (privacy-focused Twitter frontend):
+
+**How it works:**
+- Fetches tweets from configured Twitter accounts via Nitter RSS feeds
+- No Twitter API key required
+- Privacy-focused (uses Nitter, not official Twitter API)
+
+**To enable:**
+
+1. Edit `src/config/sources.json`:
+   ```json
+   {
+     "id": "x-twitter",
+     "enabled": true,
+     "config": {
+       "nitterInstance": "nitter.privacydev.net",
+       "accounts": [
+         "RetailDive",
+         "TechCrunch",
+         "MITretail",
+         "NRFnews",
+         "RetailWire"
+       ]
+     }
+   }
+   ```
+
+2. Customize the accounts list with retail/tech Twitter accounts you want to follow
+
+**Note:** Nitter instances can be slow or rate-limited. X integration is disabled by default. Enable only if you need real-time Twitter updates.
+
+**Alternative Nitter instances:**
+- `nitter.net`
+- `nitter.privacydev.net`
+- `nitter.poast.org`
+
+If one instance is slow, try another in the `nitterInstance` config.
+
+### Customizing News Sources
+
+Edit `src/config/sources.json` to:
+- Enable/disable specific sources
+- Add new RSS feeds
+- Adjust source priorities
+- Configure source-specific settings
+
+**Example - Adding a new RSS source:**
+
+```json
+{
+  "id": "my-custom-source",
+  "name": "My Custom Source",
+  "type": "rss",
+  "enabled": true,
+  "priority": 2,
+  "config": {
+    "feedUrl": "https://example.com/feed.xml"
+  }
+}
+```
+
+### Scoring Configuration
+
+Adjust scoring weights in `src/config/sources.json`:
+
+```json
+{
+  "scoring": {
+    "keywordMatch": 0.4,      // 40% - How well keywords match
+    "sourceAuthority": 0.3,   // 30% - Trust in the source
+    "freshness": 0.2,         // 20% - How recent the news is
+    "engagement": 0.1         // 10% - Social engagement (future)
+  }
+}
+```
+
+### Source Authority Ratings
+
+Configure trust levels for each source (0.0 to 1.0):
+
+```json
+{
+  "sourceAuthority": {
+    "retaildive": 1.0,           // Highest authority
+    "supply-chain-dive": 0.95,
+    "techcrunch-logistics": 0.85,
+    "google-news": 0.7,
+    "my-custom-source": 0.8
+  }
+}
+```
+
+### Diversification Settings
+
+Control source diversity in results:
+
+```json
+{
+  "diversification": {
+    "maxPerSource": 3,    // Max news items from a single source
+    "minSources": 2       // Minimum number of different sources
+  }
+}
+```
 
 ## Project Structure
 
 ```
 NewsBotSlack/
 ├── src/
-│   ├── index.js          # Main application entry point
-│   ├── newsService.js    # Google News RSS fetching logic
-│   ├── slackService.js   # Slack webhook integration
-│   └── scheduler.js      # Cron job scheduler
-├── .env.example          # Environment variable template
-├── .gitignore           # Git ignore rules
-├── package.json         # Node.js dependencies
-├── Dockerfile           # Docker container configuration
-├── docker-compose.yml   # Docker Compose orchestration
-└── README.md           # This file
+│   ├── index.js                      # Main application entry point
+│   ├── newsService.js                # News aggregation orchestrator
+│   ├── slackService.js               # Slack webhook integration
+│   ├── scheduler.js                  # Cron job scheduler
+│   ├── sources/
+│   │   ├── SourceManager.js          # Multi-source coordinator
+│   │   ├── aggregator.js             # News aggregation & normalization
+│   │   ├── scorer.js                 # Relevance scoring engine
+│   │   └── sources/
+│   │       ├── BaseSource.js         # Abstract base class
+│   │       ├── GoogleNewsSource.js   # Google News RSS implementation
+│   │       ├── RSSSource.js          # Generic RSS feed source
+│   │       ├── NewsAPISource.js      # NewsAPI.org integration
+│   │       └── XSource.js            # X (Twitter) via Nitter
+│   ├── config/
+│   │   └── sources.json              # Source configurations
+│   └── utils/
+│       └── deduplicator.js           # Advanced deduplication
+├── .env.example                      # Environment variable template
+├── .gitignore                        # Git ignore rules
+├── package.json                      # Node.js dependencies
+├── Dockerfile                        # Docker container configuration
+├── docker-compose.yml                # Docker Compose orchestration
+├── test-sources.js                   # Source testing utility
+├── test-integration.js               # Integration testing utility
+└── README.md                         # This file
 ```
 
 ## Monitoring & Logs
@@ -235,12 +385,45 @@ docker inspect newsbot-slack | grep -A 10 "Health"
 npm run test
 ```
 
+### Testing News Sources
+
+Test individual sources or the full aggregation:
+
+```bash
+# Test all sources
+node test-sources.js
+
+# Test specific source by ID
+node test-sources.js google-news
+node test-sources.js retaildive
+
+# Test full integration
+node test-integration.js
+```
+
 ### Code Structure
 
-- **newsService.js**: Handles fetching and parsing Google News RSS feeds
+**Core Services:**
+- **newsService.js**: News aggregation orchestrator (uses SourceManager)
 - **slackService.js**: Formats messages and sends them to Slack via webhook
 - **scheduler.js**: Manages cron scheduling and job execution
 - **index.js**: Express server with API endpoints and application lifecycle
+
+**Multi-Source Architecture:**
+- **SourceManager.js**: Coordinates fetching from all sources in parallel
+- **aggregator.js**: Combines results, deduplicates, and normalizes
+- **scorer.js**: Scores news by relevance using configurable weights
+- **deduplicator.js**: Advanced duplicate detection across sources
+
+**Source Implementations:**
+- **BaseSource.js**: Abstract base class for all sources
+- **GoogleNewsSource.js**: Google News RSS feed integration
+- **RSSSource.js**: Generic RSS feed parser (for Retail Dive, etc.)
+- **NewsAPISource.js**: NewsAPI.org integration (80,000+ sources)
+- **XSource.js**: X (Twitter) integration via Nitter RSS feeds
+
+**Configuration:**
+- **sources.json**: Source definitions, scoring weights, authority ratings
 
 ## Environment Variables Reference
 
@@ -251,13 +434,42 @@ npm run test
 | `TIMEZONE` | No | `Europe/Berlin` | Timezone for scheduling |
 | `NEWS_KEYWORDS` | No | See default | Comma-separated search keywords |
 | `MAX_NEWS_ITEMS` | No | `10` | Maximum news items to display |
+| `NEWS_API_KEY` | No | - | NewsAPI.org API key (optional) |
+| `NEWS_SOURCES_CONFIG` | No | `src/config/sources.json` | Path to sources configuration |
 | `PORT` | No | `3000` | Server port |
 | `NODE_ENV` | No | `production` | Node environment |
+
+## Multi-Source Architecture Benefits
+
+### Why Multiple Sources?
+
+**Better Coverage:**
+- Google News aggregates from many sources but may miss specialized retail publications
+- Direct RSS feeds from Retail Dive, Supply Chain Dive provide expert coverage
+- TechCrunch Logistics covers tech/startup perspective
+- **NewsAPI** provides access to 80,000+ additional sources worldwide
+- **X (Twitter)** offers real-time updates from industry leaders and publications
+
+**Quality Over Quantity:**
+- Source authority ratings ensure trusted sources rank higher
+- Relevance scoring prioritizes news that matches your keywords
+- Diversification prevents one source from dominating results
+
+**Resilience:**
+- If one source fails, others continue working (graceful degradation)
+- Parallel fetching from all sources for speed
+- Per-source error handling prevents total failures
+
+**Customizable:**
+- Easy to add new RSS feeds via `sources.json`
+- Configure scoring weights to match your priorities
+- Enable/disable sources without code changes
 
 ## Security Notes
 
 - Never commit your `.env` file to version control
 - Keep your Slack webhook URL secret
+- Keep your NewsAPI key private
 - The Docker container runs as a non-root user
 - Logs are automatically rotated to prevent disk space issues
 
