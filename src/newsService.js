@@ -1,13 +1,10 @@
-const Parser = require('rss-parser');
-const axios = require('axios');
+const SourceManager = require('./sources/SourceManager');
 
 class NewsService {
   constructor() {
-    this.parser = new Parser({
-      customFields: {
-        item: ['pubDate', 'description', 'link', 'title', 'source']
-      }
-    });
+    // Initialize SourceManager for multi-source aggregation
+    this.sourceManager = new SourceManager();
+
     this.keywords = process.env.NEWS_KEYWORDS?.split(',').map(k => k.trim()) || [
       'retail innovation',
       'autonomous delivery',
@@ -18,50 +15,30 @@ class NewsService {
   }
 
   /**
-   * Fetch news from Google News RSS feed
-   * @param {string} query - Search query
-   * @returns {Promise<Array>} Array of news items
+   * DEPRECATED: Use SourceManager instead
+   * Kept for backward compatibility
    */
   async fetchGoogleNews(query) {
-    try {
-      const encodedQuery = encodeURIComponent(query);
-      const rssUrl = `https://news.google.com/rss/search?q=${encodedQuery}&hl=en-US&gl=US&ceid=US:en`;
-
-      const feed = await this.parser.parseURL(rssUrl);
-
-      return feed.items.map(item => ({
-        title: item.title,
-        link: item.link,
-        pubDate: item.pubDate,
-        description: this.cleanDescription(item.contentSnippet || item.description || ''),
-        source: this.extractSource(item.title)
-      }));
-    } catch (error) {
-      console.error(`Error fetching news for query "${query}":`, error.message);
-      return [];
-    }
+    console.warn('fetchGoogleNews is deprecated. Use SourceManager instead.');
+    return [];
   }
 
   /**
-   * Clean HTML and extra characters from description
-   * @param {string} text - Raw description
-   * @returns {string} Cleaned description
+   * DEPRECATED: Moved to BaseSource
    */
   cleanDescription(text) {
     return text
-      .replace(/<[^>]*>/g, '') // Remove HTML tags
+      .replace(/<[^>]*>/g, '')
       .replace(/&nbsp;/g, ' ')
       .replace(/&quot;/g, '"')
       .replace(/&amp;/g, '&')
       .replace(/\s+/g, ' ')
       .trim()
-      .substring(0, 200); // Limit to 200 characters
+      .substring(0, 200);
   }
 
   /**
-   * Extract source name from Google News title format
-   * @param {string} title - News title
-   * @returns {string} Source name
+   * DEPRECATED: Moved to GoogleNewsSource
    */
   extractSource(title) {
     const match = title.match(/- (.+)$/);
@@ -69,9 +46,7 @@ class NewsService {
   }
 
   /**
-   * Remove duplicate news items based on title similarity
-   * @param {Array} items - News items
-   * @returns {Array} Deduplicated items
+   * DEPRECATED: Moved to Deduplicator
    */
   removeDuplicates(items) {
     const seen = new Set();
@@ -89,38 +64,26 @@ class NewsService {
   }
 
   /**
-   * Fetch and aggregate news from all configured keywords
-   * @returns {Promise<Array>} Aggregated and deduplicated news items
+   * Fetch and aggregate news from all configured sources
+   * Uses SourceManager for multi-source aggregation, scoring, and diversification
+   * @returns {Promise<Array>} Aggregated, scored, and deduplicated news items
    */
   async fetchRetailInnovationNews() {
-    console.log(`Fetching news for keywords: ${this.keywords.join(', ')}`);
-
     try {
-      // Fetch news for all keywords in parallel
-      const newsPromises = this.keywords.map(keyword => this.fetchGoogleNews(keyword));
-      const newsResults = await Promise.all(newsPromises);
-
-      // Flatten and combine all results
-      const allNews = newsResults.flat();
-
-      // Remove duplicates
-      const uniqueNews = this.removeDuplicates(allNews);
-
-      // Sort by publication date (newest first)
-      uniqueNews.sort((a, b) => {
-        const dateA = new Date(a.pubDate);
-        const dateB = new Date(b.pubDate);
-        return dateB - dateA;
-      });
+      // Fetch from all sources using SourceManager
+      const allNews = await this.sourceManager.fetchAllNews(this.keywords);
 
       // Limit to max items
-      const limitedNews = uniqueNews.slice(0, this.maxItems);
+      const limitedNews = allNews.slice(0, this.maxItems);
 
-      console.log(`Found ${limitedNews.length} unique news items`);
+      // Log statistics
+      const stats = this.sourceManager.getStats(limitedNews);
+      console.log(`→ News from ${stats.sources} different sources`);
+      console.log(`✓ Returning ${limitedNews.length} top news items`);
 
       return limitedNews;
     } catch (error) {
-      console.error('Error fetching retail innovation news:', error);
+      console.error('✗ Error fetching retail innovation news:', error);
       throw error;
     }
   }

@@ -1,1 +1,0 @@
-Filterung der News nach relevanz und Bedeutung. 
