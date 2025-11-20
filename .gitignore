@@ -22,3 +22,9 @@ Thumbs.db
 
 # Docker
 docker-compose.override.yml
+
+# Worktrees
+worktree/
+
+# Coordinator status
+.coordinator-status.json
