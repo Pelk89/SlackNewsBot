@@ -112,7 +112,7 @@
     "the-verge": 0.8
   },
   "diversification": {
-    "maxPerSource": 3,
+    "maxPerSource": 15,
     "minSources": 2
   }
 }
