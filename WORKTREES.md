@@ -2,6 +2,26 @@
 
 Dieses Projekt nutzt Git Worktrees für parallele Feature-Entwicklung. Jedes Feature hat seinen eigenen Worktree mit eigenem Branch.
 
+## 🤖 Projektkoordinator (AI Agent)
+
+Das Projekt hat einen **AI Projektkoordinator** (Claude), der die Worktree-Verwaltung übernimmt. Die Rollenbeschreibung findest du in `.claude/PROJECT_COORDINATOR_ROLE.md`.
+
+**Aktivierung**: Erwähne `@coordinator` oder frage nach dem "Status der Features"
+
+**Hauptaufgaben**:
+- 📊 Status-Überwachung aller Feature-Worktrees
+- 🔀 Koordiniertes Mergen von Features in main
+- 🔄 Synchronisation aller Features mit main
+- 🧹 Cleanup nach erfolgreichem Merge
+
+**Beispiele**:
+```
+"@coordinator status"                    # Zeige Status aller Features
+"@coordinator merge improvements"        # Merge ein spezifisches Feature
+"@coordinator sync alle features"        # Synchronisiere alle mit main
+"Merge alles was bereit ist"            # Batch-Merge
+```
+
 ## 📁 Worktree-Struktur
 
 ```
