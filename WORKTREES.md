@@ -30,7 +30,8 @@ NewsBotSlack/                           # Main worktree (Branch: main)
     ├── improvements/                   # Branch: feature/improvements
     ├── error-handling/                 # Branch: feature/error-handling
     ├── multi-channel/                  # Branch: feature/multi-channel
-    └── news-sources/                   # Branch: feature/news-sources
+    ├── news-sources/                   # Branch: feature/news-sources
+    └── news-relevance/                 # Branch: feature/news-relevance
 ```
 
 ## 🎯 Feature-Beschreibungen
@@ -60,6 +61,14 @@ Erweiterte News-Quellen:
 - Spezifische RSS Feeds (RetailDive, TechCrunch)
 - Multiple Quellen aggregieren
 - News-Scoring & Relevanz-Ranking
+
+### 5. **feature/news-relevance** (`worktree/news-relevance/`) 🔴 **PRIORITY**
+Intelligentes Relevanz-Scoring & Filtering:
+- Multi-dimensionales Scoring (Thematik, Autorität, Aktualität, Innovation)
+- Spam & Clickbait Detection
+- Duplicate Filtering
+- User-Feedback Loop
+- **Ziel**: Nur die Top 8 wichtigsten News für Innovation Lead
 
 ## 🚀 Verwendung
 
