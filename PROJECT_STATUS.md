@@ -1,8 +1,8 @@
 # 📊 NewsBot Slack - Projekt Status & Aufgaben
 
-**Letztes Update**: 20. November 2025, 15:35 Uhr
+**Letztes Update**: 20. November 2025, 16:00 Uhr
 **Projekt-Phase**: Production-Ready MVP+ (3 Features gemerged)
-**Main Branch**: efad204
+**Main Branch**: 737b34a
 
 ---
 
@@ -401,24 +401,32 @@ Statt neue Features könntest du auch **news-relevance Phase 2** entwickeln:
 
 ## 📝 Notizen & Entscheidungen
 
-### 2025-11-20 15:35 Uhr - PRODUCTION-READY! 🎉
-- ✅ **configurable-settings gemerged in main** (bfdf7dc → efad204)
+### 2025-11-20 16:00 Uhr - PRODUCTION-READY + Filter-Fixes! 🎉
+- ✅ **Filter-Konfiguration optimiert** (737b34a)
+  - maxPerSource: 3 → 15 (mehr Artikel pro Quelle erlaubt)
+  - minWordCount: 30 → 15 Wörter (weniger strenge Qualitätsfilter)
+  - **Resultat**: 10 Artikel täglich statt nur 1 ✓
+- ✅ **configurable-settings gemerged & cleaned up** (bfdf7dc → efad204)
   - MAX_NEWS_ITEMS=10 konfigurierbar über ENV
   - Dotenv Override Fix (dotenv.config({ override: true }))
-  - X (Twitter) deaktiviert (alle Nitter Instanzen down)
-  - NewsAPI deaktiviert (API Key Validierung fehlgeschlagen)
+  - Worktree entfernt, Branch gelöscht
+- ✅ **X (Twitter) & NewsAPI deaktiviert**
+  - X: Alle Nitter Instanzen down (vollständiger Diagnostic Report)
+  - NewsAPI: API Key Validierung fehlgeschlagen
+  - Diagnostic Tools: test-x-fetch.js, X_TWITTER_DIAGNOSTIC.md
 - ✅ **5 funktionierende News-Quellen**
   - Google News RSS (~487 Artikel/Tag)
   - Retail Dive RSS (Retail-spezifisch)
   - TechCrunch Logistics RSS (Tech-fokussiert)
   - Supply Chain Dive RSS (Logistics)
   - Retail TouchPoints RSS
-- ✅ **Tests erfolgreich**
+- ✅ **Tests erfolgreich - 10 Artikel geliefert!**
   - Bot läuft stabil
-  - 1 relevanter Artikel gefunden (Score: 58%)
+  - 10 hochrelevante Artikel (Avg Score: 52.4%)
+  - 5 verschiedene Quellen
   - Slack Message erfolgreich gesendet
 - 🎯 **Status**: PRODUCTION-READY (52% Gesamt-Fortschritt, 57% Production Features)
-- 🚀 **Nächster Schritt**: Deployment oder weitere Features (error-handling empfohlen)
+- 🚀 **Nächster Schritt**: Deployment oder feature/error-handling entwickeln
 
 ### 2025-11-20 12:00 Uhr - MAJOR UPDATE
 - ✅ **news-sources gemerged in main** (fc08a52)
