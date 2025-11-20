@@ -52,7 +52,8 @@ class RelevanceEngine {
     // Extract config values
     this.weights = this.config.scoring.weights;
     this.minRelevanceScore = this.config.scoring.thresholds.minRelevanceScore;
-    this.maxArticles = this.config.filtering.maxArticles;
+    // Respect MAX_NEWS_ITEMS env variable, fallback to config, then default to 10
+    this.maxArticles = parseInt(process.env.MAX_NEWS_ITEMS) || this.config.filtering.maxArticles || 10;
 
     console.log('RelevanceEngine initialized with weights:', this.weights);
   }
