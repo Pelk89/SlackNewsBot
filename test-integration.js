@@ -6,12 +6,16 @@
 
 require('dotenv').config();
 const NewsService = require('./src/newsService');
+const { getCacheManager } = require('./src/cache/CacheManager');
+const { getCircuitBreaker } = require('./src/utils/circuitBreaker');
 
 async function testIntegration() {
   console.log('=== NewsService Integration Test ===\n');
 
   try {
     const newsService = new NewsService();
+    const cacheManager = getCacheManager();
+    const circuitBreaker = getCircuitBreaker();
 
     console.log('Testing fetchRetailInnovationNews()...\n');
 
@@ -52,6 +56,28 @@ async function testIntegration() {
       console.log(`  Average score: ${avgScore.toFixed(3)}`);
       console.log(`  Max score: ${maxScore.toFixed(3)}`);
       console.log(`  Min score: ${minScore.toFixed(3)}`);
+    }
+
+    // Display cache statistics
+    console.log('\n--- Cache Statistics ---');
+    cacheManager.logStats();
+
+    // Display circuit breaker statistics
+    console.log('\n--- Circuit Breaker Status ---');
+    const cbStats = circuitBreaker.getAllStats();
+    const sourceCount = Object.keys(cbStats).length;
+
+    if (sourceCount > 0) {
+      console.log(`Tracked sources: ${sourceCount}`);
+      Object.entries(cbStats).forEach(([sourceId, stats]) => {
+        const statusIcon = stats.state === 'CLOSED' ? '✓' : stats.state === 'OPEN' ? '⛔' : '🔄';
+        console.log(`  ${statusIcon} ${sourceId}:`);
+        console.log(`     State: ${stats.state}`);
+        console.log(`     Failure rate: ${stats.failureRatePercent}% (${stats.failures} failures, ${stats.successes} successes)`);
+        console.log(`     Healthy: ${stats.isHealthy ? 'Yes' : 'No'}`);
+      });
+    } else {
+      console.log('  No sources tracked yet');
     }
 
     console.log('\n✓ Integration test completed successfully\n');

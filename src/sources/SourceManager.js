@@ -6,6 +6,7 @@ const GoogleNewsSource = require('./sources/GoogleNewsSource');
 const RSSSource = require('./sources/RSSSource');
 const NewsAPISource = require('./sources/NewsAPISource');
 const XSource = require('./sources/XSource');
+const { getCircuitBreaker } = require('../utils/circuitBreaker');
 
 /**
  * SourceManager - Manages all news sources
@@ -29,6 +30,9 @@ class SourceManager {
       this.config.scoring,
       this.config.sourceAuthority
     );
+
+    // Initialize circuit breaker
+    this.circuitBreaker = getCircuitBreaker();
 
     // Initialize sources
     this.sources = this.loadSources();
@@ -196,18 +200,35 @@ class SourceManager {
   }
 
   /**
-   * Fetch news from a single source with error handling
+   * Fetch news from a single source with error handling and circuit breaker
    *
    * @param {BaseSource} source - Source instance
    * @param {Array<string>} keywords - Search keywords
    * @returns {Promise<Array<Object>>} News items from source
    */
   async fetchFromSource(source, keywords) {
+    const sourceId = source.id || source.name;
+
+    // Check circuit breaker - skip if circuit is open
+    if (!this.circuitBreaker.allowRequest(sourceId)) {
+      const stats = this.circuitBreaker.getStats(sourceId);
+      console.warn(`⚠️  Skipping ${source.name} - circuit breaker OPEN (failure rate: ${stats.failureRatePercent}%)`);
+      return [];
+    }
+
     try {
       const items = await source.fetch(keywords);
+
+      // Record success with circuit breaker
+      this.circuitBreaker.recordSuccess(sourceId);
+
       return items || [];
     } catch (error) {
       console.error(`✗ Error fetching from ${source.name}:`, error.message);
+
+      // Record failure with circuit breaker
+      this.circuitBreaker.recordFailure(sourceId, error);
+
       return []; // Graceful degradation
     }
   }

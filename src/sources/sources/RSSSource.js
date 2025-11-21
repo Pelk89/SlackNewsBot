@@ -1,5 +1,7 @@
 const Parser = require('rss-parser');
 const BaseSource = require('./BaseSource');
+const { parseRSSWithRetry } = require('../../utils/retry');
+const { getCacheManager } = require('../../cache/CacheManager');
 
 /**
  * RSSSource - Generic RSS feed source
@@ -31,29 +33,41 @@ class RSSSource extends BaseSource {
    * @returns {Promise<Array<Object>>} Array of news items
    */
   async fetch(keywords) {
+    const cacheManager = getCacheManager();
+    const cacheKey = cacheManager.generateKey(`source:${this.id}`, { keywords });
+
     try {
       console.log(`→ Fetching from ${this.name} (${this.feedUrl})`);
 
-      const feed = await this.parser.parseURL(this.feedUrl);
+      // Use cache wrapper for automatic caching
+      return await cacheManager.wrap('rss', cacheKey, async () => {
+        // Parse RSS with retry and timeout
+        const feed = await parseRSSWithRetry(this.parser, this.feedUrl, {
+          timeout: 20000, // 20s timeout for RSS parsing
+          retries: 1,     // 1 retry for transient failures
+          operationName: `${this.name} RSS fetch`
+        });
 
-      // Normalize all items
-      const items = feed.items.map(item => this.normalize({
-        title: item.title,
-        link: item.link,
-        pubDate: item.pubDate || item.isoDate,
-        description: item.contentSnippet || item.description || item['content:encoded'] || '',
-        source: this.name,
-        image: this.extractImage(item)
-      }));
+        // Normalize all items
+        const items = feed.items.map(item => this.normalize({
+          title: item.title,
+          link: item.link,
+          pubDate: item.pubDate || item.isoDate,
+          description: item.contentSnippet || item.description || item['content:encoded'] || '',
+          source: this.name,
+          image: this.extractImage(item)
+        }));
 
-      // Filter by keyword relevance if keywords provided
-      const filtered = keywords && keywords.length > 0
-        ? this.filterByKeywords(items, keywords)
-        : items;
+        // Filter by keyword relevance if keywords provided
+        const filtered = keywords && keywords.length > 0
+          ? this.filterByKeywords(items, keywords)
+          : items;
 
-      console.log(`✓ ${this.name}: Found ${filtered.length} items`);
+        console.log(`✓ ${this.name}: Found ${filtered.length} items`);
 
-      return filtered;
+        return filtered;
+      });
+
     } catch (error) {
       console.error(`✗ Error fetching from ${this.name}:`, error.message);
       return [];

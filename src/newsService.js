@@ -1,5 +1,6 @@
 const SourceManager = require('./sources/SourceManager');
 const RelevanceEngine = require('./relevance/RelevanceEngine');
+const { getCacheManager } = require('./cache/CacheManager');
 
 class NewsService {
   constructor() {
@@ -16,6 +17,9 @@ class NewsService {
       this.relevanceEngine = null;
     }
 
+    // Initialize cache manager
+    this.cacheManager = getCacheManager();
+
     this.keywords = process.env.NEWS_KEYWORDS?.split(',').map(k => k.trim()) || [
       'retail innovation',
       'autonomous delivery',
@@ -31,44 +35,50 @@ class NewsService {
    * @returns {Promise<Array>} Aggregated, scored, filtered, and ranked news items
    */
   async fetchRetailInnovationNews() {
+    const cacheKey = this.cacheManager.generateKey('processed', { keywords: this.keywords, maxItems: this.maxItems });
+
     try {
       console.log(`→ Fetching news for keywords: ${this.keywords.join(', ')}`);
 
-      // Step 1: Fetch from all sources using SourceManager
-      const allNews = await this.sourceManager.fetchAllNews(this.keywords);
-      console.log(`→ Fetched ${allNews.length} items from multiple sources`);
+      // Use cache wrapper for processed results
+      return await this.cacheManager.wrap('processed', cacheKey, async () => {
+        // Step 1: Fetch from all sources using SourceManager
+        const allNews = await this.sourceManager.fetchAllNews(this.keywords);
+        console.log(`→ Fetched ${allNews.length} items from multiple sources`);
 
-      // Step 2: Apply RelevanceEngine if available for advanced filtering
-      let finalNews;
-      if (this.relevanceEngine) {
-        console.log('→ Applying RelevanceEngine for intelligent filtering...');
-        finalNews = await this.relevanceEngine.scoreAndFilter(allNews);
+        // Step 2: Apply RelevanceEngine if available for advanced filtering
+        let finalNews;
+        if (this.relevanceEngine) {
+          console.log('→ Applying RelevanceEngine for intelligent filtering...');
+          finalNews = await this.relevanceEngine.scoreAndFilter(allNews);
 
-        // Log filtering stats
-        const stats = this.relevanceEngine.getFilteringStats(allNews, finalNews);
-        console.log(`→ Filtered: ${stats.filteredCount}/${stats.originalCount} items (${stats.filterRate} removed)`);
-        console.log(`→ Average relevance: ${stats.averageScore}, Top score: ${stats.topScore}`);
-      } else {
-        // Fallback: use SourceManager's basic scoring
-        console.log('→ Using SourceManager basic scoring (RelevanceEngine unavailable)');
-        finalNews = allNews;
-      }
+          // Log filtering stats
+          const stats = this.relevanceEngine.getFilteringStats(allNews, finalNews);
+          console.log(`→ Filtered: ${stats.filteredCount}/${stats.originalCount} items (${stats.filterRate} removed)`);
+          console.log(`→ Average relevance: ${stats.averageScore}, Top score: ${stats.topScore}`);
+        } else {
+          // Fallback: use SourceManager's basic scoring
+          console.log('→ Using SourceManager basic scoring (RelevanceEngine unavailable)');
+          finalNews = allNews;
+        }
 
-      // Step 3: Limit to max items
-      const limitedNews = finalNews.slice(0, this.maxItems);
+        // Step 3: Limit to max items
+        const limitedNews = finalNews.slice(0, this.maxItems);
 
-      // Step 4: Log final statistics
-      const sourceStats = this.sourceManager.getStats(limitedNews);
-      console.log(`→ Final: ${limitedNews.length} news from ${sourceStats.sources} sources`);
+        // Step 4: Log final statistics
+        const sourceStats = this.sourceManager.getStats(limitedNews);
+        console.log(`→ Final: ${limitedNews.length} news from ${sourceStats.sources} sources`);
 
-      if (limitedNews.length > 0 && limitedNews[0].relevance) {
-        const avgScore = limitedNews.reduce((sum, item) => sum + item.relevance.score, 0) / limitedNews.length;
-        console.log(`→ Avg relevance score: ${(avgScore * 100).toFixed(1)}%`);
-      }
+        if (limitedNews.length > 0 && limitedNews[0].relevance) {
+          const avgScore = limitedNews.reduce((sum, item) => sum + item.relevance.score, 0) / limitedNews.length;
+          console.log(`→ Avg relevance score: ${(avgScore * 100).toFixed(1)}%`);
+        }
 
-      console.log(`✓ Returning ${limitedNews.length} top news items`);
+        console.log(`✓ Returning ${limitedNews.length} top news items`);
 
-      return limitedNews;
+        return limitedNews;
+      });
+
     } catch (error) {
       console.error('✗ Error fetching retail innovation news:', error);
       throw error;

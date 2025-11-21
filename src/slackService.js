@@ -1,4 +1,22 @@
 const axios = require('axios');
+const axiosRetry = require('axios-retry').default;
+
+// Configure axios-retry for Slack webhook
+axiosRetry(axios, {
+  retries: parseInt(process.env.RETRY_ATTEMPTS || '3'),
+  retryDelay: (retryCount) => {
+    const baseDelay = parseInt(process.env.RETRY_BASE_DELAY || '1000');
+    return baseDelay * Math.pow(2, retryCount - 1); // Exponential backoff: 1s, 2s, 4s
+  },
+  retryCondition: (error) => {
+    // Retry on network errors or 5xx errors
+    return axiosRetry.isNetworkOrIdempotentRequestError(error) ||
+           (error.response && error.response.status >= 500);
+  },
+  onRetry: (retryCount, error, requestConfig) => {
+    console.log(`⚠️  Slack webhook retry attempt ${retryCount}:`, error.message);
+  }
+});
 
 class SlackService {
   constructor(webhookUrl) {
@@ -168,7 +186,10 @@ class SlackService {
         headers: {
           'Content-Type': 'application/json'
         },
-        timeout: 10000 // 10 second timeout
+        timeout: 15000, // 15 second timeout (increased from 10s)
+        'axios-retry': {
+          retries: 3
+        }
       });
 
       if (response.status === 200 && response.data === 'ok') {

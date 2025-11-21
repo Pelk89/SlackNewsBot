@@ -1,5 +1,7 @@
 const Parser = require('rss-parser');
 const BaseSource = require('./BaseSource');
+const { parseRSSWithRetry } = require('../../utils/retry');
+const { getCacheManager } = require('../../cache/CacheManager');
 
 /**
  * GoogleNewsSource - Fetches news from Google News RSS feeds
@@ -29,20 +31,27 @@ class GoogleNewsSource extends BaseSource {
    * @returns {Promise<Array<Object>>} Array of news items
    */
   async fetch(keywords) {
+    const cacheManager = getCacheManager();
+    const cacheKey = cacheManager.generateKey(`source:${this.id}`, { keywords });
+
     try {
       console.log(`→ Fetching from ${this.name} with keywords: ${keywords.join(', ')}`);
 
-      // Fetch news for all keywords in parallel
-      const promises = keywords.map(keyword => this.fetchForKeyword(keyword));
-      const results = await Promise.all(promises);
+      // Use cache wrapper for automatic caching
+      return await cacheManager.wrap('rss', cacheKey, async () => {
+        // Fetch news for all keywords in parallel
+        const promises = keywords.map(keyword => this.fetchForKeyword(keyword));
+        const results = await Promise.all(promises);
 
-      // Flatten and normalize
-      const allItems = results.flat();
-      const normalized = allItems.map(item => this.normalize(item));
+        // Flatten and normalize
+        const allItems = results.flat();
+        const normalized = allItems.map(item => this.normalize(item));
 
-      console.log(`✓ ${this.name}: Found ${normalized.length} items`);
+        console.log(`✓ ${this.name}: Found ${normalized.length} items`);
 
-      return normalized;
+        return normalized;
+      });
+
     } catch (error) {
       console.error(`✗ Error fetching from ${this.name}:`, error.message);
       return [];
@@ -60,7 +69,12 @@ class GoogleNewsSource extends BaseSource {
       const encodedQuery = encodeURIComponent(keyword);
       const rssUrl = `${this.baseUrl}?q=${encodedQuery}&hl=${this.language}&gl=${this.country}&ceid=${this.country}:${this.language.split('-')[0]}`;
 
-      const feed = await this.parser.parseURL(rssUrl);
+      // Parse RSS with retry and timeout
+      const feed = await parseRSSWithRetry(this.parser, rssUrl, {
+        timeout: 20000,
+        retries: 1,
+        operationName: `${this.name} keyword: ${keyword}`
+      });
 
       return feed.items.map(item => ({
         title: item.title,

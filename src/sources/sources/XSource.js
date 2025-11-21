@@ -1,4 +1,6 @@
 const BaseSource = require('./BaseSource');
+const { parseRSSWithRetry } = require('../../utils/retry');
+const { getCacheManager } = require('../../cache/CacheManager');
 
 /**
  * XSource - Fetches news from X (Twitter) RSS feeds
@@ -31,30 +33,37 @@ class XSource extends BaseSource {
    * @returns {Promise<Array<Object>>} Array of news items
    */
   async fetch(keywords) {
+    const cacheManager = getCacheManager();
+    const cacheKey = cacheManager.generateKey(`source:${this.id}`, { keywords, accounts: this.accounts });
+
     try {
       console.log(`→ Fetching from ${this.name}`);
 
-      const allItems = [];
+      // Use cache wrapper for automatic caching
+      return await cacheManager.wrap('rss', cacheKey, async () => {
+        const allItems = [];
 
-      // Fetch from configured accounts
-      if (this.accounts.length > 0) {
-        const accountItems = await this.fetchFromAccounts();
-        allItems.push(...accountItems);
-      }
+        // Fetch from configured accounts
+        if (this.accounts.length > 0) {
+          const accountItems = await this.fetchFromAccounts();
+          allItems.push(...accountItems);
+        }
 
-      // Fetch from search terms (combine with keywords)
-      const searchTerms = [...new Set([...this.searchTerms, ...keywords])];
-      if (searchTerms.length > 0) {
-        const searchItems = await this.fetchFromSearch(searchTerms);
-        allItems.push(...searchItems);
-      }
+        // Fetch from search terms (combine with keywords)
+        const searchTerms = [...new Set([...this.searchTerms, ...keywords])];
+        if (searchTerms.length > 0) {
+          const searchItems = await this.fetchFromSearch(searchTerms);
+          allItems.push(...searchItems);
+        }
 
-      // Normalize all items
-      const normalized = allItems.map(item => this.normalize(item));
+        // Normalize all items
+        const normalized = allItems.map(item => this.normalize(item));
 
-      console.log(`✓ ${this.name}: Found ${normalized.length} items`);
+        console.log(`✓ ${this.name}: Found ${normalized.length} items`);
 
-      return normalized;
+        return normalized;
+      });
+
     } catch (error) {
       console.error(`✗ Error fetching from ${this.name}:`, error.message);
       return [];
@@ -76,7 +85,12 @@ class XSource extends BaseSource {
         // Nitter RSS URL format: https://nitter.net/{username}/rss
         const rssUrl = `https://${this.nitterInstance}/${account}/rss`;
 
-        const feed = await parser.parseURL(rssUrl);
+        // Parse RSS with retry and timeout
+        const feed = await parseRSSWithRetry(parser, rssUrl, {
+          timeout: 20000,
+          retries: 1,
+          operationName: `${this.name} account: @${account}`
+        });
 
         feed.items.forEach(item => {
           items.push({
@@ -116,7 +130,12 @@ class XSource extends BaseSource {
         const encodedTerm = encodeURIComponent(term);
         const rssUrl = `https://${this.nitterInstance}/search/rss?f=tweets&q=${encodedTerm}`;
 
-        const feed = await parser.parseURL(rssUrl);
+        // Parse RSS with retry and timeout
+        const feed = await parseRSSWithRetry(parser, rssUrl, {
+          timeout: 20000,
+          retries: 1,
+          operationName: `${this.name} search: ${term}`
+        });
 
         feed.items.forEach(item => {
           items.push({
