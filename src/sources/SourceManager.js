@@ -215,38 +215,128 @@ class SourceManager {
   /**
    * Diversify news sources to prevent single-source dominance
    *
-   * @param {Array<Object>} items - Scored news items
+   * Strategy:
+   * 1. Group articles by source
+   * 2. Use round-robin selection to distribute evenly
+   * 3. If insufficient articles, gradually relax maxPerSource
+   * 4. Prioritize quality (score) within each source's allocation
+   *
+   * @param {Array<Object>} items - Scored news items (sorted by score)
    * @returns {Array<Object>} Diversified items
    */
   diversify(items) {
-    const maxPerSource = this.config.diversification?.maxPerSource || 3;
+    const targetArticles = 10; // Match newsService.maxItems default
+    const configMaxPerSource = this.config.diversification?.maxPerSource || 3;
     const minSources = this.config.diversification?.minSources || 2;
 
-    const sourceCounts = {};
-    const diversified = [];
-    const uniqueSources = new Set();
-
-    for (const item of items) {
+    // Group articles by source (preserving score order within each source)
+    const bySource = {};
+    items.forEach(item => {
       const sourceId = item.sourceId;
-
-      // Track how many items from this source
-      sourceCounts[sourceId] = (sourceCounts[sourceId] || 0) + 1;
-
-      // Skip if we've reached max for this source
-      if (sourceCounts[sourceId] > maxPerSource) {
-        continue;
+      if (!bySource[sourceId]) {
+        bySource[sourceId] = [];
       }
+      bySource[sourceId].push(item);
+    });
 
-      diversified.push(item);
-      uniqueSources.add(sourceId);
+    const sourceIds = Object.keys(bySource);
+    const numSources = sourceIds.length;
+
+    if (numSources === 0) {
+      console.warn('⚠ No articles available for diversification');
+      return [];
     }
+
+    // Try to get targetArticles with smart distribution
+    let result = this.tryRoundRobinDiversification(
+      bySource,
+      sourceIds,
+      targetArticles,
+      configMaxPerSource
+    );
+
+    // If we didn't get enough articles, gradually relax limits
+    if (result.articles.length < targetArticles && numSources > 0) {
+      const relaxationSteps = [configMaxPerSource + 1, configMaxPerSource + 2, configMaxPerSource + 3, targetArticles];
+
+      for (const relaxedMax of relaxationSteps) {
+        if (result.articles.length >= targetArticles) break;
+
+        console.log(`📊 Relaxing maxPerSource to ${relaxedMax} to reach ${targetArticles} articles`);
+        result = this.tryRoundRobinDiversification(
+          bySource,
+          sourceIds,
+          targetArticles,
+          relaxedMax
+        );
+      }
+    }
+
+    // Log diversity metrics
+    const uniqueSources = result.sourceCount;
+    const distribution = result.distribution;
+
+    console.log(`📊 Source Diversity: ${uniqueSources} sources, ${result.articles.length} articles`);
+    Object.entries(distribution).forEach(([sourceId, count]) => {
+      const sourceName = bySource[sourceId][0]?.source || sourceId;
+      console.log(`   - ${sourceName}: ${count} articles`);
+    });
 
     // Warn if we don't have minimum source diversity
-    if (uniqueSources.size < minSources) {
-      console.warn(`⚠ Only ${uniqueSources.size} unique sources (minimum: ${minSources})`);
+    if (uniqueSources < minSources) {
+      console.warn(`⚠ Only ${uniqueSources} unique sources (minimum: ${minSources})`);
     }
 
-    return diversified;
+    return result.articles;
+  }
+
+  /**
+   * Attempt round-robin diversification with given maxPerSource limit
+   *
+   * @param {Object} bySource - Articles grouped by sourceId
+   * @param {Array<string>} sourceIds - List of source IDs
+   * @param {number} targetArticles - Target number of articles
+   * @param {number} maxPerSource - Max articles per source
+   * @returns {Object} Result with articles, sourceCount, and distribution
+   */
+  tryRoundRobinDiversification(bySource, sourceIds, targetArticles, maxPerSource) {
+    const diversified = [];
+    const distribution = {};
+    const uniqueSources = new Set();
+
+    // Round-robin: take articles from each source in rotation
+    let round = 0;
+    const maxRounds = Math.max(maxPerSource, Math.ceil(targetArticles / sourceIds.length));
+
+    while (diversified.length < targetArticles && round < maxRounds) {
+      let addedThisRound = false;
+
+      for (const sourceId of sourceIds) {
+        if (diversified.length >= targetArticles) break;
+
+        const sourceArticles = bySource[sourceId];
+        const currentCount = distribution[sourceId] || 0;
+
+        // Check if we can add another article from this source
+        if (currentCount < maxPerSource && sourceArticles[round]) {
+          diversified.push(sourceArticles[round]);
+          distribution[sourceId] = currentCount + 1;
+          uniqueSources.add(sourceId);
+          addedThisRound = true;
+        }
+      }
+
+      // If no articles were added this round, we're done
+      if (!addedThisRound) break;
+
+      round++;
+    }
+
+    return {
+      articles: diversified,
+      sourceCount: uniqueSources.size,
+      distribution: distribution
+    };
   }
 
   /**
