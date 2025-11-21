@@ -22,7 +22,13 @@ class ThematicScorer {
   score(article) {
     const text = `${article.title} ${article.description || ''}`.toLowerCase();
     let score = 0;
-    let maxPossibleScore = 10; // Normalization baseline
+
+    // Calculate actual maximum score based on keyword configuration
+    // This ensures proper normalization regardless of keyword counts
+    const maxPossibleScore =
+      (this.tier1Keywords.length * 2.0) +  // Tier 1: 2.0x weight
+      (this.tier2Keywords.length * 1.0) +  // Tier 2: 1.0x weight
+      (this.tier3Keywords.length * 0.5);   // Tier 3: 0.5x weight
 
     // Count Tier 1 matches (high priority - 2.0x weight)
     this.tier1Keywords.forEach(keyword => {

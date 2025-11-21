@@ -109,19 +109,6 @@ class SlackService {
       // Build the text content
       let text = `*${index + 1}. <${item.link}|${item.title}>*\n${item.description}`;
 
-      // Add relevance information if available
-      if (item.relevance) {
-        const scorePercent = Math.round(item.relevance.score * 100);
-        const relevanceBar = this.formatRelevanceBar(item.relevance.score);
-
-        text += `\n\n📊 Relevance: ${relevanceBar} ${scorePercent}%`;
-
-        // Add reasoning if available
-        if (item.relevance.metadata?.reasoning) {
-          text += ` • _${item.relevance.metadata.reasoning}_`;
-        }
-      }
-
       // Add source and date
       text += `\n_${item.source} • ${formattedDate}_`;
 

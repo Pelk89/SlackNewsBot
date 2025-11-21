@@ -7,7 +7,7 @@
       "innovation": 0.15
     },
     "thresholds": {
-      "minRelevanceScore": 0.5,
+      "minRelevanceScore": 0.3,
       "minAuthorityScore": 0.4,
       "maxAgeHours": 48
     }

@@ -59,21 +59,34 @@ class InnovationScorer {
    */
   score(article) {
     const text = `${article.title} ${article.description || ''}`.toLowerCase();
-    let score = 0.5; // Base score (neutral)
+    let score = 0.6; // Base score (neutral, slightly positive)
 
-    // Add points for innovation signals
+    // Track matched signals to avoid double-counting
+    const matchedPositive = new Set();
+    const matchedNegative = new Set();
+
+    // Add points for innovation signals (unique matches only)
     this.innovationSignals.forEach(signal => {
-      if (text.includes(signal)) {
+      if (text.includes(signal) && !matchedPositive.has(signal)) {
+        matchedPositive.add(signal);
         score += 0.1;
       }
     });
 
-    // Subtract points for non-innovation signals
+    // Subtract points for non-innovation signals (unique matches only)
+    // Reduced penalty to avoid over-filtering business/financial news
     this.nonInnovationSignals.forEach(signal => {
-      if (text.includes(signal)) {
-        score -= 0.15;
+      if (text.includes(signal) && !matchedNegative.has(signal)) {
+        matchedNegative.add(signal);
+        score -= 0.05; // Reduced from -0.15
       }
     });
+
+    // Cap total penalties at -0.3 maximum to prevent excessive filtering
+    const totalPenalty = matchedNegative.size * 0.05;
+    if (totalPenalty > 0.3) {
+      score = Math.max(0.3, score);
+    }
 
     // Clamp to 0-1 range
     return Math.max(0, Math.min(1, score));

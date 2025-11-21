@@ -68,7 +68,9 @@ class QualityFilter {
    * @returns {boolean} True if meets word count
    */
   meetsMinWordCount(article) {
-    const text = `${article.title} ${article.description || ''}`;
+    // Count only description words (exclude title)
+    // This provides a more accurate assessment of content quality
+    const text = article.description || '';
     const wordCount = this.countWords(text);
 
     return wordCount >= this.minWordCount;
