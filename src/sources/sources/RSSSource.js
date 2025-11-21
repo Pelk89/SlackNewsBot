@@ -2,11 +2,13 @@ const Parser = require('rss-parser');
 const BaseSource = require('./BaseSource');
 const { parseRSSWithRetry } = require('../../utils/retry');
 const { getCacheManager } = require('../../cache/CacheManager');
+const { getKeywordMatcher } = require('../../utils/keywordMatcher');
 
 /**
  * RSSSource - Generic RSS feed source
  *
  * Can be used for any standard RSS feed (RetailDive, TechCrunch, etc.)
+ * Enhanced with KeywordMatcher for better keyword filtering
  */
 class RSSSource extends BaseSource {
   constructor(config) {
@@ -24,6 +26,9 @@ class RSSSource extends BaseSource {
     if (!this.feedUrl) {
       throw new Error(`RSSSource ${this.id} requires feedUrl in config`);
     }
+
+    // Initialize KeywordMatcher for improved filtering
+    this.keywordMatcher = getKeywordMatcher();
   }
 
   /**
@@ -76,6 +81,7 @@ class RSSSource extends BaseSource {
 
   /**
    * Filter items by keyword relevance
+   * Enhanced with KeywordMatcher for variations, synonyms, and fuzzy matching
    *
    * @param {Array<Object>} items - News items
    * @param {Array<string>} keywords - Keywords to match
@@ -83,8 +89,21 @@ class RSSSource extends BaseSource {
    */
   filterByKeywords(items, keywords) {
     return items.filter(item => {
-      const text = `${item.title} ${item.description}`.toLowerCase();
-      return keywords.some(keyword => text.includes(keyword.toLowerCase()));
+      const text = `${item.title} ${item.description}`;
+
+      // Simple language detection
+      const textLower = text.toLowerCase();
+      const germanWords = ['der', 'die', 'das', 'und', 'ist'];
+      const englishWords = ['the', 'and', 'is', 'for'];
+      const germanCount = germanWords.filter(w => textLower.includes(` ${w} `)).length;
+      const englishCount = englishWords.filter(w => textLower.includes(` ${w} `)).length;
+      const language = germanCount > englishCount ? 'de' : 'en';
+
+      // Check if any keyword matches (with variations/synonyms)
+      return keywords.some(keyword => {
+        const matchResult = this.keywordMatcher.matches(text, keyword, { language });
+        return matchResult.matched;
+      });
     });
   }
 

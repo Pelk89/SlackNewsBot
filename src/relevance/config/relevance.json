@@ -43,7 +43,53 @@
       "food delivery",
       "e-commerce",
       "innovation"
-    ]
+    ],
+    "variations": {
+      "last mile delivery": ["last-mile delivery", "lastmile delivery", "last mile"],
+      "autonomous delivery": ["autonomous deliveries", "self-driving delivery", "driverless delivery"],
+      "delivery robots": ["delivery robot", "robot delivery", "robotic delivery"],
+      "autonomous vehicles retail": ["autonomous vehicle retail", "self-driving vehicles", "driverless vehicles"],
+      "grocery automation": ["automated grocery", "grocery automations"],
+      "retail innovation": ["retail innovations", "innovative retail"],
+      "retail technology": ["retail tech", "retailtech", "retail technologies"],
+      "supply chain automation": ["automated supply chain", "supply-chain automation"],
+      "e-grocery": ["egrocery", "e grocery", "online grocery"],
+      "logistics innovation": ["logistics innovations", "innovative logistics"],
+      "warehouse automation": ["automated warehouse", "warehouse automations"],
+      "delivery drones": ["delivery drone", "drone delivery"],
+      "robotics retail": ["retail robotics", "robotic retail"],
+      "food delivery": ["food deliveries"]
+    },
+    "synonyms": {
+      "en-de": {
+        "delivery": ["lieferung", "zustellung"],
+        "last mile": ["letzte meile"],
+        "autonomous": ["autonom", "autonome", "autonomer"],
+        "robots": ["roboter"],
+        "robot": ["roboter"],
+        "grocery": ["lebensmittel", "lebensmittelgeschäft"],
+        "retail": ["einzelhandel"],
+        "innovation": ["innovation"],
+        "technology": ["technologie"],
+        "supply chain": ["lieferkette"],
+        "warehouse": ["lager", "lagerhaus"],
+        "drones": ["drohnen"],
+        "drone": ["drohne"],
+        "logistics": ["logistik"],
+        "automation": ["automatisierung"],
+        "automated": ["automatisiert"],
+        "vehicles": ["fahrzeuge"],
+        "vehicle": ["fahrzeug"],
+        "self-driving": ["selbstfahrend", "selbstfahrende"],
+        "driverless": ["fahrerlos", "fahrerlose"]
+      }
+    },
+    "matchingOptions": {
+      "fuzzyThreshold": 0.8,
+      "autoPlural": true,
+      "autoHyphen": true,
+      "cacheEnabled": true
+    }
   },
   "sources": {
     "authorityMap": {

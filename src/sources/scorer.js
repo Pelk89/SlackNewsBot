@@ -1,11 +1,18 @@
+const { getKeywordMatcher } = require('../utils/keywordMatcher');
+
 /**
  * RelevanceScorer - Scores news items based on relevance
  *
  * Scoring factors:
- * - Keyword match quality
+ * - Keyword match quality (enhanced with KeywordMatcher)
  * - Source authority
  * - Freshness (recency)
  * - Engagement (if available)
+ *
+ * Enhanced with KeywordMatcher for:
+ * - Keyword variations and synonyms
+ * - Multi-language support (EN/DE)
+ * - Fuzzy matching
  */
 class RelevanceScorer {
   constructor(weights = {}, authorityMap = {}) {
@@ -27,6 +34,9 @@ class RelevanceScorer {
       'newsapi': 0.75,
       'the-verge': 0.8
     };
+
+    // Initialize KeywordMatcher (fallback when RelevanceEngine unavailable)
+    this.keywordMatcher = getKeywordMatcher();
   }
 
   /**
@@ -71,6 +81,7 @@ class RelevanceScorer {
 
   /**
    * Score keyword match quality (0-1)
+   * Enhanced with KeywordMatcher for variations, synonyms, and fuzzy matching
    *
    * @param {Object} item - News item
    * @param {Array<string>} keywords - Search keywords
@@ -81,22 +92,50 @@ class RelevanceScorer {
       return 0.5; // Neutral score if no keywords
     }
 
-    const text = `${item.title} ${item.description}`.toLowerCase();
+    const title = item.title || '';
+    const description = item.description || '';
+    const text = `${title} ${description}`;
+
+    // Simple language detection
+    const language = this._detectLanguage(text);
     let matchScore = 0;
 
     keywords.forEach(keyword => {
-      const keywordLower = keyword.toLowerCase();
+      // Check title match (worth more)
+      const titleMatch = this.keywordMatcher.matches(title, keyword, { language });
+      if (titleMatch.matched) {
+        matchScore += 1.0 * titleMatch.similarity;
+        return; // Don't double-count in description
+      }
 
-      // Title match is worth more than description match
-      if (item.title.toLowerCase().includes(keywordLower)) {
-        matchScore += 1.0;
-      } else if (text.includes(keywordLower)) {
-        matchScore += 0.5;
+      // Check full text match (worth less)
+      const textMatch = this.keywordMatcher.matches(text, keyword, { language });
+      if (textMatch.matched) {
+        matchScore += 0.5 * textMatch.similarity;
       }
     });
 
     // Normalize by number of keywords
     return Math.min(1.0, matchScore / keywords.length);
+  }
+
+  /**
+   * Detect article language (simple heuristic)
+   * @param {string} text - Article text
+   * @returns {string} Language code (en or de)
+   */
+  _detectLanguage(text) {
+    const textLower = text.toLowerCase();
+
+    // German indicators
+    const germanWords = ['der', 'die', 'das', 'und', 'ist', 'für'];
+    const germanCount = germanWords.filter(word => textLower.includes(` ${word} `)).length;
+
+    // English indicators
+    const englishWords = ['the', 'and', 'is', 'for', 'with'];
+    const englishCount = englishWords.filter(word => textLower.includes(` ${word} `)).length;
+
+    return germanCount > englishCount ? 'de' : 'en';
   }
 
   /**
