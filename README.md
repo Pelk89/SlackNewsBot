@@ -17,6 +17,9 @@ A Slack bot that automatically delivers daily news summaries about retail innova
   - Engagement metrics (10%)
 - 🔍 **Advanced Deduplication** - Smart duplicate detection across all sources
 - 🎨 **Source Diversification** - Prevents single-source dominance (max 3 per source)
+- 🔄 **Intelligent Retry Mechanisms** - Automatic retry with exponential backoff for failed requests
+- 💾 **Multi-Layer Caching** - Reduces API calls and improves performance (6-24h TTLs)
+- ⚡ **Circuit Breaker Pattern** - Auto-disables failing sources to prevent cascade failures
 - 🔔 Scheduled delivery to Slack at 8 AM (configurable)
 - 🎯 Focused on retail innovation topics:
   - Retail Innovation
@@ -68,6 +71,21 @@ TIMEZONE=Europe/Berlin
 # News settings
 NEWS_KEYWORDS=retail innovation,autonomous delivery,last mile delivery,retail technology,grocery innovation
 MAX_NEWS_ITEMS=10
+
+# Retry configuration (production-grade reliability)
+RETRY_ATTEMPTS=3              # Max retry attempts (default: 3)
+HTTP_TIMEOUT=30000            # HTTP timeout in ms (default: 30s)
+RETRY_BASE_DELAY=1000         # Base delay for exponential backoff (default: 1s)
+
+# Cache configuration (improves performance)
+ENABLE_CACHE=true             # Enable/disable caching (default: true)
+CACHE_TTL_RSS=21600          # RSS cache TTL in seconds (default: 6h)
+CACHE_TTL_NEWSAPI=86400      # NewsAPI cache TTL in seconds (default: 24h)
+CACHE_TTL_PROCESSED=86400    # Processed results TTL (default: 24h)
+
+# Circuit breaker configuration (prevents cascade failures)
+CIRCUIT_BREAKER_THRESHOLD=0.5       # Failure rate to trip breaker (default: 50%)
+CIRCUIT_BREAKER_TIMEOUT=900000      # Time to keep circuit open in ms (default: 15min)
 
 # Server settings
 PORT=3000

@@ -1,0 +1,75 @@
+{
+  "description": "Retry and Circuit Breaker Configuration for NewsBot",
+  "version": "1.0.0",
+  "retry": {
+    "defaults": {
+      "attempts": 3,
+      "baseDelay": 1000,
+      "maxDelay": 30000,
+      "factor": 2,
+      "timeout": 30000
+    },
+    "perSource": {
+      "newsapi": {
+        "attempts": 2,
+        "timeout": 30000,
+        "comment": "Limited retries due to rate limiting (100 requests/day)"
+      },
+      "rss": {
+        "attempts": 1,
+        "timeout": 20000,
+        "comment": "Single retry for RSS feeds, most are stable"
+      },
+      "google-news": {
+        "attempts": 1,
+        "timeout": 20000,
+        "comment": "Google News is generally reliable"
+      },
+      "x": {
+        "attempts": 1,
+        "timeout": 20000,
+        "comment": "Nitter instances can be unstable, limited retry"
+      },
+      "slack": {
+        "attempts": 3,
+        "timeout": 15000,
+        "comment": "Critical path - ensure message delivery"
+      }
+    }
+  },
+  "circuitBreaker": {
+    "enabled": true,
+    "threshold": 0.5,
+    "timeout": 900000,
+    "windowSize": 10,
+    "description": {
+      "threshold": "Failure rate (0-1) to trip circuit breaker (0.5 = 50%)",
+      "timeout": "Time in ms to keep circuit open before retry (900000 = 15 minutes)",
+      "windowSize": "Number of recent requests to track for failure rate"
+    }
+  },
+  "cache": {
+    "enabled": true,
+    "ttl": {
+      "rss": 21600,
+      "newsapi": 86400,
+      "processed": 86400,
+      "description": {
+        "rss": "6 hours (21600s) - RSS feeds update frequently",
+        "newsapi": "24 hours (86400s) - Preserve daily quota",
+        "processed": "24 hours (86400s) - Cache final results until next run"
+      }
+    }
+  },
+  "errorHandling": {
+    "retryableStatusCodes": [408, 500, 502, 503, 504],
+    "nonRetryableStatusCodes": [400, 401, 403, 404, 429],
+    "retryableErrors": [
+      "ECONNABORTED",
+      "ETIMEDOUT",
+      "ECONNRESET",
+      "ENOTFOUND",
+      "ECONNREFUSED"
+    ]
+  }
+}
