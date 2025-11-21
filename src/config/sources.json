@@ -93,6 +93,56 @@
       "config": {
         "feedUrl": "https://www.theverge.com/rss/index.xml"
       }
+    },
+    {
+      "id": "retail-technology-uk",
+      "name": "Retail Technology UK",
+      "type": "rss",
+      "enabled": true,
+      "priority": 3,
+      "config": {
+        "feedUrl": "https://www.retailtechnology.co.uk/rss.xml"
+      }
+    },
+    {
+      "id": "logistics-viewpoints",
+      "name": "Logistics Viewpoints",
+      "type": "rss",
+      "enabled": true,
+      "priority": 3,
+      "config": {
+        "feedUrl": "https://logisticsviewpoints.com/feed/"
+      }
+    },
+    {
+      "id": "logistics-manager",
+      "name": "Logistics Manager",
+      "type": "rss",
+      "enabled": true,
+      "priority": 3,
+      "config": {
+        "feedUrl": "https://www.logisticsmanager.com/feed/"
+      }
+    },
+    {
+      "id": "modern-retail",
+      "name": "Modern Retail",
+      "type": "rss",
+      "enabled": true,
+      "priority": 2,
+      "config": {
+        "feedUrl": "https://www.modernretail.co/feed/"
+      }
+    },
+    {
+      "id": "chain-store-age",
+      "name": "Chain Store Age",
+      "type": "rss",
+      "enabled": false,
+      "priority": 3,
+      "config": {
+        "feedUrl": "https://chainstoreage.com/rss.xml"
+      }
     }
   ],
   "scoring": {
@@ -109,10 +159,15 @@
     "google-news": 0.7,
     "newsapi": 0.75,
     "x-twitter": 0.65,
-    "the-verge": 0.8
+    "the-verge": 0.8,
+    "retail-technology-uk": 0.85,
+    "logistics-viewpoints": 0.9,
+    "logistics-manager": 0.9,
+    "modern-retail": 0.85,
+    "chain-store-age": 0.95
   },
   "diversification": {
-    "maxPerSource": 15,
-    "minSources": 2
+    "maxPerSource": 3,
+    "minSources": 5
   }
 }
