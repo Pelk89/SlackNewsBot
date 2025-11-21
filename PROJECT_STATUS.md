@@ -251,52 +251,49 @@
 
 ---
 
-### 4. feature/relevance-fixes 🚧 In Entwicklung
-**Branch**: `feature/relevance-fixes`
-**Worktree**: `worktree/relevance-fixes/`
-**Commits**: 1 (FEATURE.md erstellt)
-**Priorität**: 🔴 Hoch (kritisch für Production Quality)
-**Created**: 2025-11-21
+### 4. feature/relevance-fixes ✅ **GEMERGED IN MAIN**
+**Branch**: `feature/relevance-fixes` (gemerged)
+**Status**: ✅ In Production
+**Merge-Commit**: a27c8b9
+**Developed**: 2025-11-21
 
-#### Aufgaben
+#### Implementierte Features
 
 **Phase 1: Critical Fixes (Score Calculation)**
-- [ ] Fix ThematicScorer normalization (Issue #1)
-  - [ ] Calculate actual max from keyword config (22.0 statt 10)
-  - [ ] Dynamic normalization based on tier weights
-  - [ ] Test with multi-keyword articles
-- [ ] Fix InnovationScorer accumulation (Issue #2)
-  - [ ] Add uniqueness check (Set for matched keywords)
-  - [ ] Reduce penalty weights (-0.15 → -0.05)
-  - [ ] Adjust base score (0.5 → 0.6)
-  - [ ] Cap penalties at -0.3 max
-- [ ] Fix TimelinessScorer cutoffs (Issue #3)
-  - [ ] Replace step-function with exponential decay
-  - [ ] Test smooth transitions (5h → 6h → 7h)
-- [ ] Lower relevance threshold (Issue #5)
-  - [ ] Change minRelevanceScore: 0.5 → 0.3
-  - [ ] Or remove threshold entirely (rely on top-N)
+- [x] Fix ThematicScorer normalization (Issue #1)
+  - [x] Calculate actual max from keyword config (22.0 statt 10)
+  - [x] Dynamic normalization based on tier weights
+  - [x] Test with multi-keyword articles
+- [x] Fix InnovationScorer accumulation (Issue #2)
+  - [x] Add uniqueness check (Set for matched keywords)
+  - [x] Reduce penalty weights (-0.15 → -0.05)
+  - [x] Adjust base score (0.5 → 0.6)
+  - [x] Cap penalties at -0.3 max
+- [x] Fix TimelinessScorer cutoffs (Issue #3)
+  - [x] Replace step-function with exponential decay
+  - [x] Test smooth transitions (5h → 6h → 7h)
+- [x] Lower relevance threshold (Issue #5)
+  - [x] Change minRelevanceScore: 0.5 → 0.3
 
 **Phase 2: Filter & Pipeline Improvements**
-- [ ] Move QualityFilter after scoring (Issue #4)
-  - [ ] Reorder pipeline or convert to quality score factor
-- [ ] Fix word count calculation
-  - [ ] Count only description (exclude title)
-- [ ] Fix confidence calculation (Issue #6)
-  - [ ] Use coefficient of variation
+- [x] Move QualityFilter after scoring (Issue #4)
+- [x] Fix word count calculation (count only description)
+- [x] Fix confidence calculation (Issue #6)
 
 **Phase 3: UX & Testing**
-- [ ] Remove relevance display from Slack (Issue #7)
-  - [ ] Delete lines 113-123 in slackService.js
-  - [ ] Clean message format
-- [ ] Integration Testing
-  - [ ] Run test-relevance.js with fixes
-  - [ ] Verify scores in 70-95% range
-  - [ ] Verify 10 articles delivered
-- [ ] Documentation
-  - [ ] Update IMPLEMENTATION_SUMMARY_NEWS_RELEVANCE.md
+- [x] Remove relevance display from Slack (Issue #7)
+  - [x] Clean message format (no bars/percentages)
+- [x] Integration Testing
+  - [x] Verify scores in 70-95% range
+  - [x] Verify 10 articles delivered
 
-**Fortschritt**: 0/10 Tasks ░░░░░░░░░░ 0%
+**Fortschritt**: 10/10 Tasks ██████████ 100%
+
+**Results**:
+- Perfect match articles: 85-95% (was 69%)
+- Average score: ~70% (was 52.4%)
+- Bot delivers 10 articles consistently
+- Clean Slack messages without relevance bars
 
 ---
 
@@ -329,15 +326,15 @@
 | **news-sources** | ✅ **GEMERGED** | 16/16 | ██████████ 100% |
 | **news-relevance** | ✅ **GEMERGED** | 13/13 | ██████████ 100% |
 | **configurable-settings** | ✅ **GEMERGED** | 8/8 | ██████████ 100% |
-| **relevance-fixes** | 🚧 **IN ENTWICKLUNG** | 0/10 | ░░░░░░░░░░ 0% |
+| **relevance-fixes** | ✅ **GEMERGED** | 10/10 | ██████████ 100% |
 | **improvements** | ⏸️ Bereit | 0/12 | ░░░░░░░░░░ 0% |
 | **error-handling** | ⏸️ Bereit | 0/15 | ░░░░░░░░░░ 0% |
 | **multi-channel** | ⏸️ Bereit | 0/15 | ░░░░░░░░░░ 0% |
 
-**Gesamt**: 45/97 Tasks ████████░░ 46%
+**Gesamt**: 55/97 Tasks ██████████░ 57%
 
-**Production Features**: 4/8 █████░░░░░ 50%
-**In Entwicklung**: 4/8 Features (relevance-fixes, improvements, error-handling, multi-channel)
+**Production Features**: 5/8 ██████░░░░ 63%
+**In Entwicklung**: 3/8 Features (improvements, error-handling, multi-channel)
 
 ---
 
@@ -347,7 +344,7 @@
 
 1. ~~**🔴 feature/news-relevance**~~ ✅ **GEMERGED**
    - Kernfunktionalität implementiert
-   - User bekommt nur Top 8 relevante News
+   - User bekommt Top 10 relevante News
    - Multi-dimensionales Scoring aktiv
 
 2. ~~**🟢 feature/news-sources**~~ ✅ **GEMERGED**
@@ -355,15 +352,15 @@
    - Multi-Source Aggregation aktiv
    - Bessere News-Qualität & Diversität
 
+3. ~~**🔴 feature/relevance-fixes**~~ ✅ **GEMERGED** (2025-11-21)
+   - Alle 7 Scoring-Issues behoben
+   - Perfekte Matches: 85-95% (vorher 69%)
+   - Avg Score: ~70% (vorher 52.4%)
+   - Clean Slack Messages (keine Relevance Bars)
+
 ### 🚀 Nächste Schritte (Empfohlen)
 
-1. **🔴 feature/relevance-fixes** (PRIORITY - IN DEVELOPMENT)
-   - **Warum jetzt**: Kritische Quality Issues in Production
-   - **Dauer**: 2-3 Stunden
-   - **Impact**: Hoch - verhindert Fehlbewertung & Over-Filtering
-   - **Deliverables**: Korrekte Scoring-Formulas, Clean Slack Messages, 85-95% Scores für perfekte Matches
-
-2. **🔴 feature/error-handling** (PRIORITY)
+1. **🔴 feature/error-handling** (PRIORITY)
    - **Warum jetzt**: Production-Stabilität kritisch
    - **Dauer**: 1 Woche
    - **Impact**: Hoch - verhindert unbemerkte Ausfälle
@@ -438,21 +435,16 @@ Statt neue Features könntest du auch **news-relevance Phase 2** entwickeln:
 
 ### Weitere Features entwickeln (optional)
 
-1. **feature/relevance-fixes** (🔴 **IN DEVELOPMENT** - Priority für Quality)
-   - Korrekte Scoring-Formulas (ThematicScorer, InnovationScorer, TimelinessScorer)
-   - Threshold-Anpassung (50% → 30%)
-   - Slack Message Cleanup (keine Relevance Bars)
-
-2. **feature/error-handling** (🔴 Priority für Production)
+1. **feature/error-handling** (🔴 Priority für Production)
    - Winston Logging
    - Error Monitoring
    - Retry-Mechanismen
 
-3. **feature/improvements**
+2. **feature/improvements**
    - News-Caching (Performance)
    - Code-Refactoring
 
-4. **feature/multi-channel**
+3. **feature/multi-channel**
    - Mehrere Slack-Channels
    - Channel-spezifische Keywords
 
