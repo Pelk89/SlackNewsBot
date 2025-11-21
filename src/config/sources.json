@@ -263,6 +263,86 @@
       "config": {
         "feedUrl": "https://chainstoreage.com/rss.xml"
       }
+    },
+    {
+      "id": "etailment-de",
+      "name": "etailment.de",
+      "type": "rss",
+      "enabled": true,
+      "priority": 1,
+      "config": {
+        "feedUrl": "https://etailment.de/feed"
+      }
+    },
+    {
+      "id": "textilwirtschaft",
+      "name": "TextilWirtschaft",
+      "type": "rss",
+      "enabled": true,
+      "priority": 2,
+      "config": {
+        "feedUrl": "https://www.textilwirtschaft.de/rss/news.rss"
+      }
+    },
+    {
+      "id": "lebensmittelzeitung",
+      "name": "Lebensmittel Zeitung",
+      "type": "rss",
+      "enabled": true,
+      "priority": 1,
+      "config": {
+        "feedUrl": "https://www.lebensmittelzeitung.net/rss/news"
+      }
+    },
+    {
+      "id": "horizont-handel",
+      "name": "Horizont Handel",
+      "type": "rss",
+      "enabled": true,
+      "priority": 2,
+      "config": {
+        "feedUrl": "https://www.horizont.net/rss/handel"
+      }
+    },
+    {
+      "id": "ehi-retail",
+      "name": "EHI Retail Institute",
+      "type": "rss",
+      "enabled": true,
+      "priority": 1,
+      "config": {
+        "feedUrl": "https://www.ehi.org/rss/news"
+      }
+    },
+    {
+      "id": "internetworld-handel",
+      "name": "Internet World Business Handel",
+      "type": "rss",
+      "enabled": true,
+      "priority": 2,
+      "config": {
+        "feedUrl": "https://www.internetworld.de/rss/handel.xml"
+      }
+    },
+    {
+      "id": "der-handel",
+      "name": "DER HANDEL",
+      "type": "rss",
+      "enabled": true,
+      "priority": 2,
+      "config": {
+        "feedUrl": "https://www.derhandel.de/news/rss"
+      }
+    },
+    {
+      "id": "deutsche-handwerks-zeitung",
+      "name": "Deutsche Handwerks Zeitung Handel",
+      "type": "rss",
+      "enabled": true,
+      "priority": 3,
+      "config": {
+        "feedUrl": "https://www.deutsche-handwerks-zeitung.de/rss/handel"
+      }
     }
   ],
   "scoring": {
@@ -296,7 +376,15 @@
     "logistics-viewpoints": 0.9,
     "logistics-manager": 0.9,
     "modern-retail": 0.85,
-    "chain-store-age": 0.95
+    "chain-store-age": 0.95,
+    "etailment-de": 0.95,
+    "textilwirtschaft": 0.9,
+    "lebensmittelzeitung": 1.0,
+    "horizont-handel": 0.88,
+    "ehi-retail": 0.95,
+    "internetworld-handel": 0.87,
+    "der-handel": 0.85,
+    "deutsche-handwerks-zeitung": 0.8
   },
   "diversification": {
     "maxPerSource": 3,
