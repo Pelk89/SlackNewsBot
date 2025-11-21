@@ -40,12 +40,14 @@ class TimelinessScorer {
       return 1.0;
     }
 
-    // Apply decay function
-    if (hoursAgo <= 6) return 1.0;       // < 6h = perfect
-    if (hoursAgo <= 12) return 0.9;      // < 12h = excellent
-    if (hoursAgo <= 24) return 0.7;      // < 24h = good
-    if (hoursAgo <= 48) return 0.4;      // < 48h = acceptable
-    return 0.1;                          // > 48h = old news
+    // Apply exponential decay function for smooth score transitions
+    // Formula: score = e^(-λt) where λ = decay constant, t = hours
+    // λ = 0.03 gives: 0h→100%, 6h→91%, 12h→74%, 24h→49%, 48h→30%
+    const lambda = 0.03;
+    const score = Math.exp(-lambda * hoursAgo);
+
+    // Floor at 10% for very old news (never completely irrelevant)
+    return Math.max(0.1, score);
   }
 
   /**

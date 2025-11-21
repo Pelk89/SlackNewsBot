@@ -46,8 +46,8 @@ class NewsService {
 
         // Log filtering stats
         const stats = this.relevanceEngine.getFilteringStats(allNews, finalNews);
-        console.log(`→ Filtered: ${stats.filtered}/${stats.total} items (${stats.filterRate}% removed)`);
-        console.log(`→ Spam filtered: ${stats.spamFiltered}, Duplicates: ${stats.duplicatesFiltered}`);
+        console.log(`→ Filtered: ${stats.filteredCount}/${stats.originalCount} items (${stats.filterRate} removed)`);
+        console.log(`→ Average relevance: ${stats.averageScore}, Top score: ${stats.topScore}`);
       } else {
         // Fallback: use SourceManager's basic scoring
         console.log('→ Using SourceManager basic scoring (RelevanceEngine unavailable)');

@@ -68,7 +68,7 @@ class RelevanceEngine {
 
     let filtered = [...articles];
 
-    // Stage 1: Hard Filters
+    // Stage 1: Hard Filters (Spam & Duplicates only)
     console.log('\n--- Stage 1: Hard Filters ---');
     const beforeSpam = filtered.length;
     filtered = this.spamFilter.filter(filtered);
@@ -78,10 +78,6 @@ class RelevanceEngine {
     filtered = this.duplicateFilter.filter(filtered);
     console.log(`Duplicate filter: ${beforeDuplicates} → ${filtered.length}`);
 
-    const beforeQuality = filtered.length;
-    filtered = this.qualityFilter.filter(filtered);
-    console.log(`Quality filter: ${beforeQuality} → ${filtered.length}`);
-
     // Stage 2: Score each article
     console.log('\n--- Stage 2: Scoring ---');
     filtered = filtered.map(article => ({
@@ -89,8 +85,13 @@ class RelevanceEngine {
       relevance: this.scoreArticle(article)
     }));
 
-    // Stage 3: Soft Filter (relevance threshold)
-    console.log('\n--- Stage 3: Relevance Threshold ---');
+    // Stage 3: Soft Filters (Quality & Relevance Threshold)
+    // Quality filter moved after scoring to allow highly relevant but concise articles
+    console.log('\n--- Stage 3: Soft Filters ---');
+    const beforeQuality = filtered.length;
+    filtered = this.qualityFilter.filter(filtered);
+    console.log(`Quality filter: ${beforeQuality} → ${filtered.length}`);
+
     const beforeThreshold = filtered.length;
     filtered = filtered.filter(a => a.relevance.score >= this.minRelevanceScore);
     console.log(`Threshold filter (>=${this.minRelevanceScore}): ${beforeThreshold} → ${filtered.length}`);
@@ -216,8 +217,13 @@ class RelevanceEngine {
     // Calculate variance
     const variance = scoreValues.reduce((sum, val) => sum + Math.pow(val - avg, 2), 0) / scoreValues.length;
 
-    // Lower variance = higher confidence
-    const confidence = Math.max(0, Math.min(1, 1 - variance));
+    // Use coefficient of variation (CV) for proper normalization
+    // CV = standard deviation / mean
+    const stdDev = Math.sqrt(variance);
+    const coefficientOfVariation = avg > 0 ? stdDev / avg : 0;
+
+    // Lower CV = higher confidence, clamp to 0-1 range
+    const confidence = Math.max(0, Math.min(1, 1 - coefficientOfVariation));
 
     return confidence;
   }
