@@ -251,7 +251,32 @@
 
 ---
 
-### 4. feature/relevance-fixes ✅ **GEMERGED IN MAIN**
+### 4. feature/source-diversity 🚧 In Entwicklung
+**Branch**: `feature/source-diversity`
+**Worktree**: `worktree/source-diversity/`
+**Commits**: 1 (FEATURE_SOURCE_DIVERSITY.md erstellt)
+**Priorität**: 🔴 Hoch (Quality Issue - Single Source Dominance)
+**Created**: 2025-11-21
+
+#### Problem
+Fast alle 10 Artikel kommen von einer Quelle (z.B. "Retail Innovation Hub" via Google News).
+
+#### Aufgaben
+- [ ] Reduce maxPerSource: 15 → 2
+  - [ ] Edit src/config/sources.json:247
+  - [ ] Set maxPerSource: 2
+- [ ] Test source distribution
+  - [ ] Run integration tests
+  - [ ] Verify 5+ sources in results
+  - [ ] Verify max 2 articles per source
+
+**Fortschritt**: 0/3 Tasks ░░░░░░░░░░ 0%
+
+**Goal**: 10 Artikel aus 5+ verschiedenen Quellen, max 2 pro Quelle
+
+---
+
+### 5. feature/relevance-fixes ✅ **GEMERGED IN MAIN**
 **Branch**: `feature/relevance-fixes` (gemerged)
 **Status**: ✅ In Production
 **Merge-Commit**: a27c8b9
@@ -297,21 +322,21 @@
 
 ---
 
-### 5. feature/news-sources ✅ **GEMERGED IN MAIN**
+### 6. feature/news-sources ✅ **GEMERGED IN MAIN**
 **Branch**: `feature/news-sources` (gemerged)
 **Status**: ✅ In Production (siehe oben)
 **Merge-Commit**: fc08a52
 
 ---
 
-### 6. feature/news-relevance ✅ **GEMERGED IN MAIN**
+### 7. feature/news-relevance ✅ **GEMERGED IN MAIN**
 **Branch**: `feature/news-relevance` (gemerged)
 **Status**: ✅ In Production (siehe oben)
 **Merge-Commit**: 0411f27
 
 ---
 
-### 7. feature/configurable-settings ✅ **GEMERGED IN MAIN**
+### 8. feature/configurable-settings ✅ **GEMERGED IN MAIN**
 **Branch**: `feature/configurable-settings` (gemerged)
 **Status**: ✅ In Production (siehe oben)
 **Merge-Commit**: bfdf7dc
@@ -327,14 +352,15 @@
 | **news-relevance** | ✅ **GEMERGED** | 13/13 | ██████████ 100% |
 | **configurable-settings** | ✅ **GEMERGED** | 8/8 | ██████████ 100% |
 | **relevance-fixes** | ✅ **GEMERGED** | 10/10 | ██████████ 100% |
+| **source-diversity** | 🚧 **IN ENTWICKLUNG** | 0/3 | ░░░░░░░░░░ 0% |
 | **improvements** | ⏸️ Bereit | 0/12 | ░░░░░░░░░░ 0% |
 | **error-handling** | ⏸️ Bereit | 0/15 | ░░░░░░░░░░ 0% |
 | **multi-channel** | ⏸️ Bereit | 0/15 | ░░░░░░░░░░ 0% |
 
-**Gesamt**: 55/97 Tasks ██████████░ 57%
+**Gesamt**: 55/100 Tasks ██████████░ 55%
 
-**Production Features**: 5/8 ██████░░░░ 63%
-**In Entwicklung**: 3/8 Features (improvements, error-handling, multi-channel)
+**Production Features**: 5/9 ██████░░░░ 56%
+**In Entwicklung**: 4/9 Features (source-diversity, improvements, error-handling, multi-channel)
 
 ---
 
