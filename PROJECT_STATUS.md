@@ -251,21 +251,70 @@
 
 ---
 
-### 4. feature/news-sources ✅ **GEMERGED IN MAIN**
+### 4. feature/relevance-fixes 🚧 In Entwicklung
+**Branch**: `feature/relevance-fixes`
+**Worktree**: `worktree/relevance-fixes/`
+**Commits**: 1 (FEATURE.md erstellt)
+**Priorität**: 🔴 Hoch (kritisch für Production Quality)
+**Created**: 2025-11-21
+
+#### Aufgaben
+
+**Phase 1: Critical Fixes (Score Calculation)**
+- [ ] Fix ThematicScorer normalization (Issue #1)
+  - [ ] Calculate actual max from keyword config (22.0 statt 10)
+  - [ ] Dynamic normalization based on tier weights
+  - [ ] Test with multi-keyword articles
+- [ ] Fix InnovationScorer accumulation (Issue #2)
+  - [ ] Add uniqueness check (Set for matched keywords)
+  - [ ] Reduce penalty weights (-0.15 → -0.05)
+  - [ ] Adjust base score (0.5 → 0.6)
+  - [ ] Cap penalties at -0.3 max
+- [ ] Fix TimelinessScorer cutoffs (Issue #3)
+  - [ ] Replace step-function with exponential decay
+  - [ ] Test smooth transitions (5h → 6h → 7h)
+- [ ] Lower relevance threshold (Issue #5)
+  - [ ] Change minRelevanceScore: 0.5 → 0.3
+  - [ ] Or remove threshold entirely (rely on top-N)
+
+**Phase 2: Filter & Pipeline Improvements**
+- [ ] Move QualityFilter after scoring (Issue #4)
+  - [ ] Reorder pipeline or convert to quality score factor
+- [ ] Fix word count calculation
+  - [ ] Count only description (exclude title)
+- [ ] Fix confidence calculation (Issue #6)
+  - [ ] Use coefficient of variation
+
+**Phase 3: UX & Testing**
+- [ ] Remove relevance display from Slack (Issue #7)
+  - [ ] Delete lines 113-123 in slackService.js
+  - [ ] Clean message format
+- [ ] Integration Testing
+  - [ ] Run test-relevance.js with fixes
+  - [ ] Verify scores in 70-95% range
+  - [ ] Verify 10 articles delivered
+- [ ] Documentation
+  - [ ] Update IMPLEMENTATION_SUMMARY_NEWS_RELEVANCE.md
+
+**Fortschritt**: 0/10 Tasks ░░░░░░░░░░ 0%
+
+---
+
+### 5. feature/news-sources ✅ **GEMERGED IN MAIN**
 **Branch**: `feature/news-sources` (gemerged)
 **Status**: ✅ In Production (siehe oben)
 **Merge-Commit**: fc08a52
 
 ---
 
-### 5. feature/news-relevance ✅ **GEMERGED IN MAIN**
+### 6. feature/news-relevance ✅ **GEMERGED IN MAIN**
 **Branch**: `feature/news-relevance` (gemerged)
 **Status**: ✅ In Production (siehe oben)
 **Merge-Commit**: 0411f27
 
 ---
 
-### 6. feature/configurable-settings ✅ **GEMERGED IN MAIN**
+### 7. feature/configurable-settings ✅ **GEMERGED IN MAIN**
 **Branch**: `feature/configurable-settings` (gemerged)
 **Status**: ✅ In Production (siehe oben)
 **Merge-Commit**: bfdf7dc
@@ -280,14 +329,15 @@
 | **news-sources** | ✅ **GEMERGED** | 16/16 | ██████████ 100% |
 | **news-relevance** | ✅ **GEMERGED** | 13/13 | ██████████ 100% |
 | **configurable-settings** | ✅ **GEMERGED** | 8/8 | ██████████ 100% |
+| **relevance-fixes** | 🚧 **IN ENTWICKLUNG** | 0/10 | ░░░░░░░░░░ 0% |
 | **improvements** | ⏸️ Bereit | 0/12 | ░░░░░░░░░░ 0% |
 | **error-handling** | ⏸️ Bereit | 0/15 | ░░░░░░░░░░ 0% |
 | **multi-channel** | ⏸️ Bereit | 0/15 | ░░░░░░░░░░ 0% |
 
-**Gesamt**: 45/87 Tasks █████████░ 52%
+**Gesamt**: 45/97 Tasks ████████░░ 46%
 
-**Production Features**: 4/7 ██████░░░░ 57%
-**In Entwicklung**: 3/7 Features (improvements, error-handling, multi-channel)
+**Production Features**: 4/8 █████░░░░░ 50%
+**In Entwicklung**: 4/8 Features (relevance-fixes, improvements, error-handling, multi-channel)
 
 ---
 
@@ -307,21 +357,25 @@
 
 ### 🚀 Nächste Schritte (Empfohlen)
 
-1. **🔴 feature/error-handling** (PRIORITY)
+1. **🔴 feature/relevance-fixes** (PRIORITY - IN DEVELOPMENT)
+   - **Warum jetzt**: Kritische Quality Issues in Production
+   - **Dauer**: 2-3 Stunden
+   - **Impact**: Hoch - verhindert Fehlbewertung & Over-Filtering
+   - **Deliverables**: Korrekte Scoring-Formulas, Clean Slack Messages, 85-95% Scores für perfekte Matches
+
+2. **🔴 feature/error-handling** (PRIORITY)
    - **Warum jetzt**: Production-Stabilität kritisch
    - **Dauer**: 1 Woche
    - **Impact**: Hoch - verhindert unbemerkte Ausfälle
    - **Deliverables**: Winston Logging, Error Notifications, Retry-Mechanismen
 
-2. **🟡 feature/improvements**
+3. **🟡 feature/improvements**
    - **Warum**: Performance & Code-Qualität
-   - **Dauer**: 1 Woche
    - **Impact**: Mittel - macht Bot schneller & wartbarer
    - **Deliverables**: Caching, Refactoring, Date-Formatting
 
-3. **🟡 feature/multi-channel**
+4. **🟡 feature/multi-channel**
    - **Warum**: Skalierung für mehrere Teams
-   - **Dauer**: 1-2 Wochen
    - **Impact**: Mittel - Nice-to-have für größere Deployments
    - **Deliverables**: Multi-Channel Config, Channel-Manager
 
@@ -384,22 +438,47 @@ Statt neue Features könntest du auch **news-relevance Phase 2** entwickeln:
 
 ### Weitere Features entwickeln (optional)
 
-1. **feature/error-handling** (🔴 Priority für Production)
+1. **feature/relevance-fixes** (🔴 **IN DEVELOPMENT** - Priority für Quality)
+   - Korrekte Scoring-Formulas (ThematicScorer, InnovationScorer, TimelinessScorer)
+   - Threshold-Anpassung (50% → 30%)
+   - Slack Message Cleanup (keine Relevance Bars)
+
+2. **feature/error-handling** (🔴 Priority für Production)
    - Winston Logging
    - Error Monitoring
    - Retry-Mechanismen
 
-2. **feature/improvements**
+3. **feature/improvements**
    - News-Caching (Performance)
    - Code-Refactoring
 
-3. **feature/multi-channel**
+4. **feature/multi-channel**
    - Mehrere Slack-Channels
    - Channel-spezifische Keywords
 
 ---
 
 ## 📝 Notizen & Entscheidungen
+
+### 2025-11-21 - Relevance Calculation Fixes - Worktree erstellt 🔧
+- 🚧 **feature/relevance-fixes Worktree erstellt**
+  - Branch: `feature/relevance-fixes`
+  - Worktree: `worktree/relevance-fixes/`
+  - FEATURE.md mit detaillierter Analyse erstellt (7 Issues identifiziert)
+- 🔍 **Root Cause Analysis abgeschlossen**
+  - Issue #1: ThematicScorer Normalisierung falsch (max=10 statt 22)
+  - Issue #2: InnovationScorer unbegrenzte Akkumulation
+  - Issue #3: TimelinessScorer harte Sprünge (6h → 6h+1m = 10% Verlust)
+  - Issue #4: QualityFilter VOR Scoring angewendet
+  - Issue #5: Hard Threshold Filter (50%) zu aggressiv
+  - Issue #6: Confidence Calculation mathematisch invertiert
+  - Issue #7: Slack Display - Relevance Bars müssen entfernt werden
+- 📊 **Warum Avg Score nur 52.4%**
+  - ThematicScorer trägt nur 12% bei (statt 40% Gewichtung)
+  - Innovation penalisiert Business News zu stark (-0.45 für earnings+revenue+profit)
+  - Threshold von 50% filtert fast die Hälfte aller Artikel weg
+- 🎯 **Ziel**: Perfekte Matches 85-95%, Avg Score ~70%, 10 Artikel konsistent
+- 👤 **User entwickelt in separatem Terminal weiter**
 
 ### 2025-11-20 16:00 Uhr - PRODUCTION-READY + Filter-Fixes! 🎉
 - ✅ **Filter-Konfiguration optimiert** (737b34a)
