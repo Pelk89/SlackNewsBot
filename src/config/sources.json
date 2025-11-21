@@ -95,6 +95,126 @@
       }
     },
     {
+      "id": "mit-tech-review",
+      "name": "MIT Technology Review",
+      "type": "rss",
+      "enabled": true,
+      "priority": 1,
+      "config": {
+        "feedUrl": "https://www.technologyreview.com/feed/"
+      }
+    },
+    {
+      "id": "wired",
+      "name": "Wired",
+      "type": "rss",
+      "enabled": true,
+      "priority": 1,
+      "config": {
+        "feedUrl": "https://www.wired.com/feed/rss"
+      }
+    },
+    {
+      "id": "ars-technica",
+      "name": "Ars Technica",
+      "type": "rss",
+      "enabled": true,
+      "priority": 2,
+      "config": {
+        "feedUrl": "https://feeds.arstechnica.com/arstechnica/index"
+      }
+    },
+    {
+      "id": "venturebeat",
+      "name": "VentureBeat",
+      "type": "rss",
+      "enabled": true,
+      "priority": 2,
+      "config": {
+        "feedUrl": "https://venturebeat.com/feed/"
+      }
+    },
+    {
+      "id": "fast-company",
+      "name": "Fast Company",
+      "type": "rss",
+      "enabled": true,
+      "priority": 2,
+      "config": {
+        "feedUrl": "https://www.fastcompany.com/latest/rss"
+      }
+    },
+    {
+      "id": "ieee-spectrum",
+      "name": "IEEE Spectrum",
+      "type": "rss",
+      "enabled": true,
+      "priority": 2,
+      "config": {
+        "feedUrl": "https://spectrum.ieee.org/feeds/feed.rss"
+      }
+    },
+    {
+      "id": "techcrunch-ai",
+      "name": "TechCrunch AI",
+      "type": "rss",
+      "enabled": true,
+      "priority": 1,
+      "config": {
+        "feedUrl": "https://techcrunch.com/tag/artificial-intelligence/feed/"
+      }
+    },
+    {
+      "id": "techcrunch-startups",
+      "name": "TechCrunch Startups",
+      "type": "rss",
+      "enabled": true,
+      "priority": 2,
+      "config": {
+        "feedUrl": "https://techcrunch.com/tag/startups/feed/"
+      }
+    },
+    {
+      "id": "slashdot",
+      "name": "Slashdot",
+      "type": "rss",
+      "enabled": true,
+      "priority": 3,
+      "config": {
+        "feedUrl": "http://rss.slashdot.org/Slashdot/slashdotMain"
+      }
+    },
+    {
+      "id": "hacker-news",
+      "name": "Hacker News",
+      "type": "rss",
+      "enabled": true,
+      "priority": 2,
+      "config": {
+        "feedUrl": "https://news.ycombinator.com/rss"
+      }
+    },
+    {
+      "id": "axios-tech",
+      "name": "Axios Tech",
+      "type": "rss",
+      "enabled": true,
+      "priority": 2,
+      "config": {
+        "feedUrl": "https://api.axios.com/feed/technology"
+      }
+    },
+    {
+      "id": "product-hunt",
+      "name": "Product Hunt",
+      "type": "rss",
+      "enabled": true,
+      "priority": 3,
+      "config": {
+        "feedUrl": "https://www.producthunt.com/feed"
+      }
+    },
+    {
       "id": "retail-technology-uk",
       "name": "Retail Technology UK",
       "type": "rss",
@@ -160,6 +280,18 @@
     "newsapi": 0.75,
     "x-twitter": 0.65,
     "the-verge": 0.8,
+    "mit-tech-review": 1.0,
+    "wired": 0.95,
+    "ars-technica": 0.9,
+    "venturebeat": 0.85,
+    "fast-company": 0.88,
+    "ieee-spectrum": 0.95,
+    "techcrunch-ai": 0.87,
+    "techcrunch-startups": 0.85,
+    "slashdot": 0.75,
+    "hacker-news": 0.88,
+    "axios-tech": 0.85,
+    "product-hunt": 0.7,
     "retail-technology-uk": 0.85,
     "logistics-viewpoints": 0.9,
     "logistics-manager": 0.9,
