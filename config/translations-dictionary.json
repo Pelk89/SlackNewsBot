@@ -1,0 +1,41 @@
+{
+  "version": "1.0",
+  "description": "Static translation dictionary for keyword translation (EN <-> DE)",
+  "en-to-de": {
+    "delivery": ["lieferung", "zustellung"],
+    "autonomous": ["autonom", "autonome", "autonomer", "selbstfahrend", "selbstfahrende"],
+    "last mile": ["letzte meile"],
+    "last-mile": ["letzte-meile"],
+    "robot": ["roboter"],
+    "robots": ["roboter"],
+    "grocery": ["lebensmittel", "lebensmittelgeschäft"],
+    "groceries": ["lebensmittel"],
+    "retail": ["einzelhandel"],
+    "innovation": ["innovation"],
+    "innovations": ["innovationen"],
+    "technology": ["technologie", "tech"],
+    "technologies": ["technologien"],
+    "warehouse": ["lager", "lagerhaus"],
+    "warehouses": ["lager", "lagerhäuser"],
+    "automation": ["automatisierung"],
+    "automated": ["automatisiert", "automatisierte"],
+    "supply chain": ["lieferkette"],
+    "drone": ["drohne"],
+    "drones": ["drohnen"],
+    "vehicle": ["fahrzeug"],
+    "vehicles": ["fahrzeuge"],
+    "self-driving": ["selbstfahrend", "selbstfahrende"],
+    "driverless": ["fahrerlos", "fahrerlose"],
+    "logistics": ["logistik"],
+    "e-grocery": ["e-grocery", "online-lebensmittel"],
+    "e-commerce": ["e-commerce", "online-handel"],
+    "supermarket": ["supermarkt"],
+    "supermarkets": ["supermärkte"],
+    "food": ["lebensmittel", "essen"]
+  },
+  "notes": {
+    "usage": "This dictionary is used for word-by-word translation when generating keyword variations",
+    "extension": "Add new translations by adding entries to the 'en-to-de' object",
+    "format": "Each key is an English word/phrase, value is an array of German translations"
+  }
+}

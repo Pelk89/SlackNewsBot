@@ -6,7 +6,12 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "node --watch src/index.js",
-    "test": "node src/index.js --test"
+    "test": "node src/index.js --test",
+    "generate-keywords": "node scripts/generate-keywords.js",
+    "generate-keywords:dry-run": "node scripts/generate-keywords.js --dry-run",
+    "generate-keywords:verbose": "node scripts/generate-keywords.js --verbose",
+    "validate-keywords": "node scripts/validate-keywords.js",
+    "prestart": "npm run generate-keywords"
   },
   "keywords": [
     "slack",

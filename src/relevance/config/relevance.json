@@ -1,9 +1,9 @@
 {
   "scoring": {
     "weights": {
-      "thematic": 0.40,
+      "thematic": 0.4,
       "authority": 0.25,
-      "timeliness": 0.20,
+      "timeliness": 0.2,
       "innovation": 0.15
     },
     "thresholds": {
@@ -16,7 +16,10 @@
     "maxArticles": 10,
     "deduplicationSimilarity": 0.85,
     "minWordCount": 15,
-    "languages": ["en", "de"]
+    "languages": [
+      "en",
+      "de"
+    ]
   },
   "keywords": {
     "tier1": [
@@ -45,43 +48,170 @@
       "innovation"
     ],
     "variations": {
-      "last mile delivery": ["last-mile delivery", "lastmile delivery", "last mile"],
-      "autonomous delivery": ["autonomous deliveries", "self-driving delivery", "driverless delivery"],
-      "delivery robots": ["delivery robot", "robot delivery", "robotic delivery"],
-      "autonomous vehicles retail": ["autonomous vehicle retail", "self-driving vehicles", "driverless vehicles"],
-      "grocery automation": ["automated grocery", "grocery automations"],
-      "retail innovation": ["retail innovations", "innovative retail"],
-      "retail technology": ["retail tech", "retailtech", "retail technologies"],
-      "supply chain automation": ["automated supply chain", "supply-chain automation"],
-      "e-grocery": ["egrocery", "e grocery", "online grocery"],
-      "logistics innovation": ["logistics innovations", "innovative logistics"],
-      "warehouse automation": ["automated warehouse", "warehouse automations"],
-      "delivery drones": ["delivery drone", "drone delivery"],
-      "robotics retail": ["retail robotics", "robotic retail"],
-      "food delivery": ["food deliveries"]
+      "autonomous delivery": [
+        "autonomous deliveries",
+        "autonomous-delivery",
+        "autonomousdelivery"
+      ],
+      "last mile delivery": [
+        "last mile deliveries",
+        "last-mile-delivery",
+        "lastmiledelivery"
+      ],
+      "grocery automation": [
+        "grocery automations",
+        "grocery-automation",
+        "groceryautomation"
+      ],
+      "retail innovation": [
+        "retail innovations",
+        "retail-innovation",
+        "retailinnovation"
+      ],
+      "delivery robots": [
+        "delivery robot",
+        "delivery-robots",
+        "deliveryrobots"
+      ],
+      "autonomous vehicles retail": [
+        "autonomous vehicles retails",
+        "autonomous-vehicles-retail",
+        "autonomousvehiclesretail"
+      ],
+      "retail technology": [
+        "retail technologies",
+        "retail-technology",
+        "retailtechnology"
+      ],
+      "supply chain automation": [
+        "supply chain automations",
+        "supply-chain-automation",
+        "supplychainautomation"
+      ],
+      "e-grocery": [
+        "e-groceries",
+        "e grocery",
+        "egrocery"
+      ],
+      "logistics innovation": [
+        "logistics innovations",
+        "logistics-innovation",
+        "logisticsinnovation"
+      ],
+      "warehouse automation": [
+        "warehouse automations",
+        "warehouse-automation",
+        "warehouseautomation"
+      ],
+      "delivery drones": [
+        "delivery drone",
+        "delivery-drones",
+        "deliverydrones"
+      ],
+      "robotics retail": [
+        "robotics retails",
+        "robotics-retail",
+        "roboticsretail"
+      ],
+      "retail": [
+        "retails"
+      ],
+      "grocery": [
+        "groceries"
+      ],
+      "supermarket": [
+        "supermarkets"
+      ],
+      "food delivery": [
+        "food deliveries",
+        "food-delivery",
+        "fooddelivery"
+      ],
+      "e-commerce": [
+        "e-commerces",
+        "e commerce",
+        "ecommerce"
+      ],
+      "innovation": [
+        "innovations"
+      ]
     },
     "synonyms": {
       "en-de": {
-        "delivery": ["lieferung", "zustellung"],
-        "last mile": ["letzte meile"],
-        "autonomous": ["autonom", "autonome", "autonomer"],
-        "robots": ["roboter"],
-        "robot": ["roboter"],
-        "grocery": ["lebensmittel", "lebensmittelgeschäft"],
-        "retail": ["einzelhandel"],
-        "innovation": ["innovation"],
-        "technology": ["technologie"],
-        "supply chain": ["lieferkette"],
-        "warehouse": ["lager", "lagerhaus"],
-        "drones": ["drohnen"],
-        "drone": ["drohne"],
-        "logistics": ["logistik"],
-        "automation": ["automatisierung"],
-        "automated": ["automatisiert"],
-        "vehicles": ["fahrzeuge"],
-        "vehicle": ["fahrzeug"],
-        "self-driving": ["selbstfahrend", "selbstfahrende"],
-        "driverless": ["fahrerlos", "fahrerlose"]
+        "autonomous": [
+          "autonom",
+          "autonome",
+          "autonomer",
+          "selbstfahrend",
+          "selbstfahrende"
+        ],
+        "delivery": [
+          "lieferung",
+          "zustellung"
+        ],
+        "last": [
+          "last"
+        ],
+        "mile": [
+          "mile"
+        ],
+        "grocery": [
+          "lebensmittel",
+          "lebensmittelgeschäft"
+        ],
+        "automation": [
+          "automatisierung"
+        ],
+        "retail": [
+          "einzelhandel"
+        ],
+        "innovation": [
+          "innovation"
+        ],
+        "robots": [
+          "roboter"
+        ],
+        "vehicles": [
+          "fahrzeuge"
+        ],
+        "technology": [
+          "technologie",
+          "tech"
+        ],
+        "supply": [
+          "supply"
+        ],
+        "chain": [
+          "chain"
+        ],
+        "e-grocery": [
+          "e-grocery",
+          "online-lebensmittel"
+        ],
+        "logistics": [
+          "logistik"
+        ],
+        "warehouse": [
+          "lager",
+          "lagerhaus"
+        ],
+        "drones": [
+          "drohnen"
+        ],
+        "robotics": [
+          "robotics"
+        ],
+        "supermarket": [
+          "supermarkt"
+        ],
+        "food": [
+          "lebensmittel",
+          "essen"
+        ],
+        "e-commerce": [
+          "e-commerce",
+          "online-handel"
+        ]
       }
     },
     "matchingOptions": {
@@ -93,7 +223,7 @@
   },
   "sources": {
     "authorityMap": {
-      "retaildive.com": 1.0,
+      "retaildive.com": 1,
       "supplychaindive.com": 0.95,
       "techcrunch.com": 0.9,
       "bloomberg.com": 0.9,
