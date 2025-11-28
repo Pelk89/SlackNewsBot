@@ -7,9 +7,48 @@
       "enabled": true,
       "priority": 1,
       "config": {
-        "baseUrl": "https://news.google.com/rss/search",
+        "baseUrl": "https://news.google.com/rss",
         "language": "en-US",
-        "country": "US"
+        "country": "US",
+
+        "keywordSearch": {
+          "enabled": true,
+          "priority": 1
+        },
+
+        "queryBuilder": {
+          "enabled": false,
+          "dateRange": "30d",
+          "excludeTerms": ["recipe", "cooking"],
+          "exactPhraseMatching": true,
+          "maxQueriesPerFetch": 5,
+          "similarityThreshold": 0.4
+        },
+
+        "topics": {
+          "enabled": false,
+          "feeds": [
+            {
+              "name": "BUSINESS",
+              "enabled": true,
+              "priority": 1,
+              "url": "headlines/section/topic/BUSINESS"
+            },
+            {
+              "name": "TECHNOLOGY",
+              "enabled": true,
+              "priority": 1,
+              "url": "headlines/section/topic/TECHNOLOGY"
+            },
+            {
+              "name": "SCIENCE",
+              "enabled": true,
+              "priority": 2,
+              "url": "headlines/section/topic/SCIENCE"
+            }
+          ],
+          "maxArticlesPerTopic": 15
+        }
       }
     },
     {
@@ -92,7 +131,8 @@
       "priority": 2,
       "config": {
         "feedUrl": "https://www.theverge.com/rss/index.xml"
-      }
+      },
+      "note": "Feed may be blocked by Cloudflare protection"
     },
     {
       "id": "mit-tech-review",
@@ -108,21 +148,23 @@
       "id": "wired",
       "name": "Wired",
       "type": "rss",
-      "enabled": true,
+      "enabled": false,
       "priority": 1,
       "config": {
         "feedUrl": "https://www.wired.com/feed/rss"
-      }
+      },
+      "note": "Feed URL is correct but access is blocked"
     },
     {
       "id": "ars-technica",
       "name": "Ars Technica",
       "type": "rss",
-      "enabled": true,
+      "enabled": false,
       "priority": 2,
       "config": {
         "feedUrl": "https://feeds.arstechnica.com/arstechnica/index"
-      }
+      },
+      "note": "Feed URL is correct but access is blocked"
     },
     {
       "id": "venturebeat",
@@ -262,7 +304,8 @@
       "priority": 3,
       "config": {
         "feedUrl": "https://chainstoreage.com/rss.xml"
-      }
+      },
+      "note": "Feed exists but returns 403 Forbidden"
     },
     {
       "id": "etailment-de",
@@ -274,16 +317,7 @@
         "feedUrl": "https://etailment.de/feed"
       }
     },
-    {
-      "id": "textilwirtschaft",
-      "name": "TextilWirtschaft",
-      "type": "rss",
-      "enabled": true,
-      "priority": 2,
-      "config": {
-        "feedUrl": "https://www.textilwirtschaft.de/rss/news.rss"
-      }
-    },
+
     {
       "id": "lebensmittelzeitung",
       "name": "Lebensmittel Zeitung",
@@ -291,38 +325,40 @@
       "enabled": true,
       "priority": 1,
       "config": {
-        "feedUrl": "https://www.lebensmittelzeitung.net/rss/news"
+        "feedUrl": "https://www.lebensmittelzeitung.net/news/feed/"
       }
     },
     {
       "id": "horizont-handel",
-      "name": "Horizont Handel",
+      "name": "Horizont News",
       "type": "rss",
       "enabled": true,
       "priority": 2,
       "config": {
-        "feedUrl": "https://www.horizont.net/rss/handel"
+        "feedUrl": "https://www.horizont.net/news/feed/"
       }
     },
     {
       "id": "ehi-retail",
       "name": "EHI Retail Institute",
       "type": "rss",
-      "enabled": true,
+      "enabled": false,
       "priority": 1,
       "config": {
         "feedUrl": "https://www.ehi.org/rss/news"
-      }
+      },
+      "note": "No RSS feed available - returns HTML page instead"
     },
     {
       "id": "internetworld-handel",
       "name": "Internet World Business Handel",
       "type": "rss",
-      "enabled": true,
+      "enabled": false,
       "priority": 2,
       "config": {
         "feedUrl": "https://www.internetworld.de/rss/handel.xml"
-      }
+      },
+      "note": "Publication merged with W&V in Jan 2024 - redirects to https://www.wuv.de"
     },
     {
       "id": "der-handel",
@@ -331,7 +367,7 @@
       "enabled": true,
       "priority": 2,
       "config": {
-        "feedUrl": "https://www.derhandel.de/news/rss"
+        "feedUrl": "https://etailment.de/news/feed/"
       }
     },
     {
@@ -341,7 +377,7 @@
       "enabled": true,
       "priority": 3,
       "config": {
-        "feedUrl": "https://www.deutsche-handwerks-zeitung.de/rss/handel"
+        "feedUrl": "https://www.deutsche-handwerks-zeitung.de/rss/"
       }
     }
   ],
