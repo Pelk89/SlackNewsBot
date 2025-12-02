@@ -23,6 +23,7 @@ const SemanticScorer = require('./scorers/SemanticScorer');
 const SpamFilter = require('./filters/SpamFilter');
 const DuplicateFilter = require('./filters/DuplicateFilter');
 const QualityFilter = require('./filters/QualityFilter');
+const AgeFilter = require('./filters/AgeFilter');
 
 class RelevanceEngine {
   constructor(configPath = null) {
@@ -50,6 +51,7 @@ class RelevanceEngine {
     this.spamFilter = new SpamFilter(this.config);
     this.duplicateFilter = new DuplicateFilter(this.config);
     this.qualityFilter = new QualityFilter(this.config);
+    this.ageFilter = new AgeFilter(this.config);
 
     // Extract config values
     this.weights = this.config.scoring.weights;
@@ -70,7 +72,7 @@ class RelevanceEngine {
 
     let filtered = [...articles];
 
-    // Stage 1: Hard Filters (Spam & Duplicates only)
+    // Stage 1: Hard Filters (Spam, Duplicates, Age)
     console.log('\n--- Stage 1: Hard Filters ---');
     const beforeSpam = filtered.length;
     filtered = this.spamFilter.filter(filtered);
@@ -79,6 +81,10 @@ class RelevanceEngine {
     const beforeDuplicates = filtered.length;
     filtered = this.duplicateFilter.filter(filtered);
     console.log(`Duplicate filter: ${beforeDuplicates} → ${filtered.length}`);
+
+    const beforeAge = filtered.length;
+    filtered = this.ageFilter.filter(filtered);
+    console.log(`Age filter: ${beforeAge} → ${filtered.length}`);
 
     // Stage 2: Score each article
     console.log('\n--- Stage 2: Scoring ---');
