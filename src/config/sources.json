@@ -17,9 +17,9 @@
         },
 
         "queryBuilder": {
-          "enabled": false,
-          "dateRange": "30d",
-          "excludeTerms": ["recipe", "cooking"],
+          "enabled": true,
+          "dateRange": "7d",
+          "excludeTerms": ["recipe"],
           "exactPhraseMatching": true,
           "maxQueriesPerFetch": 5,
           "similarityThreshold": 0.4
