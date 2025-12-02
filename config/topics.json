@@ -2,194 +2,210 @@
   "topics": [
     {
       "id": "autonomous-delivery",
-      "tier": 1,
+      "name": "Autonomous Delivery Systems",
       "weight": 2.0,
-      "description": "Autonomous delivery systems using robots, drones, and self-driving vehicles for last-mile logistics",
+      "tier": 1,
       "examples": [
-        "Autonomous delivery robots navigate busy city streets to deliver packages",
-        "Self-driving vans complete last-mile delivery routes without human drivers",
-        "Drone delivery service expands to new urban markets for faster shipping",
-        "Robotic delivery fleet deployed in residential neighborhoods"
+        "autonomous delivery robots",
+        "self-driving delivery vehicles",
+        "robotic last-mile delivery",
+        "automated parcel delivery",
+        "autonomous grocery delivery"
       ]
     },
     {
       "id": "ai-retail-automation",
-      "tier": 1,
+      "name": "AI in Retail Automation",
       "weight": 2.0,
-      "description": "Artificial intelligence and machine learning applications in retail operations",
+      "tier": 1,
       "examples": [
-        "Smart shelves use computer vision to track inventory in real-time",
-        "Machine learning algorithms optimize retail supply chain forecasting",
-        "AI-powered checkout systems enable frictionless shopping experience",
-        "Predictive analytics improve demand planning for grocery retailers"
+        "artificial intelligence retail",
+        "machine learning store operations",
+        "AI-powered inventory management",
+        "automated checkout systems",
+        "smart shelf technology"
       ]
     },
     {
       "id": "sustainable-retail",
-      "tier": 1,
+      "name": "Sustainable Retail",
       "weight": 2.0,
-      "description": "Sustainability initiatives including green logistics, carbon-neutral delivery, and circular economy",
+      "tier": 1,
       "examples": [
-        "Electric delivery vehicles reduce carbon emissions in last-mile logistics",
-        "Retailers adopt circular economy principles for packaging innovation",
-        "Green logistics initiatives aim for carbon-neutral delivery by 2025",
-        "Sustainable packaging solutions minimize environmental impact in retail"
+        "sustainable grocery retail",
+        "eco-friendly packaging",
+        "carbon-neutral delivery",
+        "zero-waste supermarkets",
+        "green supply chain"
       ]
     },
     {
       "id": "payment-innovation",
-      "tier": 1,
+      "name": "Payment Innovation",
       "weight": 2.0,
-      "description": "Contactless payment, mobile wallets, biometric payment, and checkout-free stores",
+      "tier": 1,
       "examples": [
-        "Contactless payment adoption surges in retail stores across Europe",
-        "Biometric payment systems replace traditional checkout processes",
-        "Amazon Go-style checkout-free stores expand to new markets",
-        "Mobile payment retail solutions enable frictionless shopping experiences"
+        "contactless payment systems",
+        "mobile checkout technology",
+        "cashierless stores",
+        "digital payment platforms",
+        "biometric payment authentication"
       ]
     },
     {
       "id": "german-retail-leaders",
-      "tier": 1,
+      "name": "German Retail Leaders",
       "weight": 2.0,
-      "description": "Major German retailers including REWE, Edeka, Aldi, and Lidl",
+      "tier": 1,
       "examples": [
-        "REWE tests new technology in Berlin stores to improve customer experience",
-        "Edeka expands digital transformation initiatives across all locations",
-        "Aldi invests in supply chain automation for faster delivery",
-        "Lidl opens first checkout-free store in Germany with advanced technology"
+        "REWE digital transformation",
+        "Edeka innovation strategy",
+        "Aldi technology adoption",
+        "Lidl automation projects",
+        "German supermarket chains"
       ]
     },
     {
       "id": "store-operations",
-      "tier": 2,
+      "name": "Store Operations Automation",
       "weight": 1.0,
-      "description": "Store operations including inventory management, planogram optimization, and loss prevention",
+      "tier": 2,
       "examples": [
-        "Digital price tags enable dynamic pricing in grocery stores",
-        "Automated replenishment systems optimize inventory levels",
-        "Smart inventory management reduces out-of-stock situations",
-        "Loss prevention technology reduces theft in retail stores"
+        "warehouse automation systems",
+        "automated inventory tracking",
+        "robotic picking systems",
+        "smart logistics platforms",
+        "automated replenishment"
       ]
     },
     {
       "id": "customer-experience",
-      "tier": 2,
+      "name": "Customer Experience Innovation",
       "weight": 1.0,
-      "description": "Customer experience enhancements through omnichannel, personalization, and AR/VR",
+      "tier": 2,
       "examples": [
-        "Omnichannel retail strategies unify online and offline shopping",
-        "Augmented reality helps customers visualize products before purchase",
-        "Personalized shopping recommendations increase customer satisfaction",
-        "Virtual try-on technology revolutionizes fashion retail experience"
+        "personalized shopping experiences",
+        "augmented reality retail",
+        "smart shopping assistants",
+        "omnichannel customer journey",
+        "digital customer engagement"
       ]
     },
     {
       "id": "supply-chain-innovation",
-      "tier": 2,
+      "name": "Supply Chain Innovation",
       "weight": 1.0,
-      "description": "Supply chain optimization using blockchain, demand forecasting, and visibility tools",
+      "tier": 2,
       "examples": [
-        "Blockchain technology improves supply chain transparency for retailers",
-        "Demand forecasting algorithms reduce waste in grocery supply chains",
-        "Cold chain logistics ensure food safety during delivery",
-        "Just-in-time delivery optimizes inventory costs for retailers"
+        "blockchain supply chain",
+        "IoT supply chain tracking",
+        "predictive supply chain analytics",
+        "automated warehouse management",
+        "real-time inventory visibility"
       ]
     },
     {
       "id": "quick-commerce",
-      "tier": 2,
+      "name": "Quick Commerce",
       "weight": 1.0,
-      "description": "Quick commerce and ultra-fast delivery services including dark stores and micro-fulfillment",
+      "tier": 2,
       "examples": [
-        "Quick commerce platforms deliver groceries in 15 minutes or less",
-        "Dark stores optimize fulfillment for ultra-fast delivery services",
-        "On-demand delivery reshapes customer expectations for retail",
-        "Micro-fulfillment centers enable same-day delivery in urban areas"
+        "instant grocery delivery",
+        "rapid commerce platforms",
+        "dark store operations",
+        "micro-fulfillment centers",
+        "15-minute delivery services"
       ]
     },
     {
       "id": "retail-technology",
-      "tier": 2,
+      "name": "Retail Technology",
       "weight": 1.0,
-      "description": "Retail technology infrastructure including IoT, cloud computing, and 5G",
+      "tier": 2,
       "examples": [
-        "5G connectivity enables real-time inventory tracking in stores",
-        "IoT sensors monitor temperature and freshness in grocery chains",
-        "Cloud computing platforms scale retail operations efficiently",
-        "Edge computing reduces latency for in-store AI applications"
+        "retail tech innovations",
+        "smart store technologies",
+        "digital shelf labels",
+        "computer vision retail",
+        "IoT connected stores"
       ]
     },
     {
       "id": "warehouse-logistics",
-      "tier": 2,
+      "name": "Warehouse & Logistics Automation",
       "weight": 1.0,
-      "description": "Warehouse automation and logistics innovation",
+      "tier": 2,
       "examples": [
-        "Warehouse automation increases efficiency in distribution centers",
-        "Automated guided vehicles transport goods in modern warehouses",
-        "Robotics streamline order fulfillment in e-commerce warehouses",
-        "Smart warehouse systems optimize storage and retrieval operations"
+        "automated warehouse robotics",
+        "autonomous mobile robots",
+        "smart logistics systems",
+        "automated sorting systems",
+        "drone warehouse operations"
       ]
     },
     {
       "id": "german-retail-market",
-      "tier": 3,
-      "weight": 0.5,
-      "description": "German retail market including Metro, dm-drogerie markt, Kaufland, and market regulations",
+      "name": "German Retail Market",
+      "weight": 1.0,
+      "tier": 2,
       "examples": [
-        "Metro wholesale retailer expands digital services in Germany",
-        "dm-drogerie markt leads sustainability efforts in German retail",
-        "Kaufland hypermarket chain invests in technology upgrades",
-        "German consumer protection regulations shape retail practices"
+        "German grocery market trends",
+        "Einzelhandel innovation",
+        "German e-commerce growth",
+        "Lebensmittelhandel technology",
+        "German retail digital transformation"
       ]
     },
     {
       "id": "retail-formats",
-      "tier": 3,
+      "name": "Retail Store Formats",
       "weight": 0.5,
-      "description": "Various retail formats including convenience stores, hypermarkets, and discount retailers",
+      "tier": 3,
       "examples": [
-        "Convenience stores adapt to changing consumer shopping habits",
-        "Hypermarket chains compete with online grocery delivery",
-        "Discount retailers expand market share with value propositions",
-        "Premium retail formats cater to high-end customer segments"
+        "autonomous convenience stores",
+        "unmanned retail formats",
+        "smart supermarket concepts",
+        "hybrid store models",
+        "experimental retail formats"
       ]
     },
     {
       "id": "e-commerce-grocery",
-      "tier": 3,
+      "name": "E-commerce Grocery",
       "weight": 0.5,
-      "description": "E-commerce and online grocery shopping trends",
+      "tier": 3,
       "examples": [
-        "E-commerce sales continue to grow in grocery sector",
-        "Online grocery shopping becomes mainstream post-pandemic",
-        "Click and collect services bridge online and offline retail",
-        "E-grocery platforms compete for market share in Europe"
+        "online grocery shopping",
+        "e-grocery platforms",
+        "digital food retail",
+        "online supermarket services",
+        "grocery e-commerce technology"
       ]
     },
     {
       "id": "retail-innovation",
-      "tier": 3,
+      "name": "General Retail Innovation",
       "weight": 0.5,
-      "description": "General retail innovation and digital transformation",
+      "tier": 3,
       "examples": [
-        "Digital transformation reshapes traditional retail business models",
-        "Retail startups disrupt traditional grocery supply chains",
-        "Innovation labs test new retail concepts before rollout",
-        "Retail technology platforms enable seamless shopping experiences"
+        "retail innovation trends",
+        "future of retail",
+        "retail disruption",
+        "next-generation retail",
+        "retail transformation"
       ]
     },
     {
       "id": "industry-segments",
-      "tier": 3,
+      "name": "Industry Segments",
       "weight": 0.5,
-      "description": "Specific retail segments including fashion, pharmacy, electronics, and beauty",
+      "tier": 3,
       "examples": [
-        "Fashion retail embraces digital fitting rooms and AR try-on",
-        "Pharmacy retail integrates health tech and telemedicine services",
-        "Electronics retail adapts to omnichannel customer expectations",
-        "Beauty retail leverages personalization and virtual consultations"
+        "food and beverage retail",
+        "grocery industry trends",
+        "supermarket sector",
+        "convenience store innovation",
+        "retail industry developments"
       ]
     }
   ]

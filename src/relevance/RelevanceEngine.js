@@ -17,6 +17,7 @@ const ThematicScorer = require('./scorers/ThematicScorer');
 const AuthorityScorer = require('./scorers/AuthorityScorer');
 const TimelinessScorer = require('./scorers/TimelinessScorer');
 const InnovationScorer = require('./scorers/InnovationScorer');
+const SemanticScorer = require('./scorers/SemanticScorer');
 
 // Import filters
 const SpamFilter = require('./filters/SpamFilter');
@@ -43,6 +44,7 @@ class RelevanceEngine {
     this.authorityScorer = new AuthorityScorer(this.config);
     this.timelinessScorer = new TimelinessScorer(this.config);
     this.innovationScorer = new InnovationScorer(this.config);
+    this.semanticScorer = new SemanticScorer(this.config);
 
     // Initialize filters
     this.spamFilter = new SpamFilter(this.config);
@@ -80,10 +82,13 @@ class RelevanceEngine {
 
     // Stage 2: Score each article
     console.log('\n--- Stage 2: Scoring ---');
-    filtered = filtered.map(article => ({
-      ...article,
-      relevance: this.scoreArticle(article)
-    }));
+    const scoringPromises = filtered.map(article =>
+      this.scoreArticle(article).then(relevance => ({
+        ...article,
+        relevance
+      }))
+    );
+    filtered = await Promise.all(scoringPromises);
 
     // Stage 3: Soft Filters (Quality & Relevance Threshold)
     // Quality filter moved after scoring to allow highly relevant but concise articles
@@ -124,13 +129,14 @@ class RelevanceEngine {
    * @param {Object} article - Article object
    * @returns {Object} Relevance object with score and breakdown
    */
-  scoreArticle(article) {
+  async scoreArticle(article) {
     // Get individual scores
     const scores = {
       thematic: this.thematicScorer.score(article),
       authority: this.authorityScorer.score(article),
       timeliness: this.timelinessScorer.score(article),
-      innovation: this.innovationScorer.score(article)
+      innovation: this.innovationScorer.score(article),
+      semantic: await this.semanticScorer.score(article)
     };
 
     // Calculate weighted final score
@@ -138,7 +144,8 @@ class RelevanceEngine {
       scores.thematic * this.weights.thematic +
       scores.authority * this.weights.authority +
       scores.timeliness * this.weights.timeliness +
-      scores.innovation * this.weights.innovation;
+      scores.innovation * this.weights.innovation +
+      scores.semantic * this.weights.semantic;
 
     // Generate reasoning
     const reasoning = this.generateReasoning(scores, article);

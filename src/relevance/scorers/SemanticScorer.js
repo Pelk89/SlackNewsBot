@@ -1,209 +1,210 @@
-const { pipeline } = require('@xenova/transformers');
-
 /**
- * SemanticScorer - Uses embeddings and sentiment analysis for relevance scoring
+ * SemanticScorer - NLP-based topic matching using embeddings
  *
- * Architecture:
- * 1. Generates embeddings for article text using multilingual sentence transformer
- * 2. Compares article embedding with pre-computed topic embeddings
- * 3. Applies sentiment analysis to boost positive news, reduce negative news
- *
- * Models:
- * - Embedding: paraphrase-multilingual-MiniLM-L12-v2 (EN+DE support)
- * - Sentiment: nlp-town/bert-base-multilingual-uncased-sentiment (1-5 stars)
+ * Scores articles based on semantic similarity to predefined topics
+ * using multilingual sentence embeddings (EN + DE support)
  */
+
+const path = require('path');
+const fs = require('fs');
+const { getModelCache } = require('../../utils/modelCache');
+
 class SemanticScorer {
-  constructor(config) {
-    this.config = config;
-    this.embeddingModel = null;
-    this.sentimentModel = null;
-    this.topics = [];
-    this.initialized = false;
-  }
+  constructor(config = null) {
+    // Load topics configuration
+    const topicsPath = path.join(__dirname, '../../../config/topics.json');
 
-  /**
-   * Initialize models and topic embeddings
-   * Called once at startup or first use (lazy initialization)
-   */
-  async initialize() {
-    if (this.initialized) return;
-
-    console.log('🤖 SemanticScorer: Loading embedding model...');
-    this.embeddingModel = await pipeline(
-      'feature-extraction',
-      'Xenova/paraphrase-multilingual-MiniLM-L12-v2'
-    );
-
-    console.log('😊 SemanticScorer: Loading sentiment model...');
-    this.sentimentModel = await pipeline(
-      'sentiment-analysis',
-      'Xenova/distilbert-base-uncased-finetuned-sst-2-english'
-    );
-
-    console.log('📚 SemanticScorer: Initializing topic embeddings...');
-    await this.initTopicEmbeddings();
-
-    this.initialized = true;
-    console.log(`✅ SemanticScorer: Initialized with ${this.topics.length} topics`);
-  }
-
-  /**
-   * Load topics from config and compute their embeddings
-   * Each topic embedding is the average of its example embeddings
-   */
-  async initTopicEmbeddings() {
     try {
-      const path = require('path');
-      const topicsPath = path.join(__dirname, '../../../config/topics.json');
-      const topicsConfig = require(topicsPath);
-
-      for (const topic of topicsConfig.topics) {
-        // Embed each example sentence
-        const exampleEmbeddings = [];
-        for (const example of topic.examples) {
-          const emb = await this.embeddingModel(example, {
-            pooling: 'mean',
-            normalize: true
-          });
-          exampleEmbeddings.push(emb.data);
-        }
-
-        // Average all example embeddings to create topic embedding
-        topic.embedding = this.averageVectors(exampleEmbeddings);
-      }
-
+      const topicsData = fs.readFileSync(topicsPath, 'utf8');
+      const topicsConfig = JSON.parse(topicsData);
       this.topics = topicsConfig.topics;
     } catch (error) {
-      console.error('❌ SemanticScorer: Failed to load topics.json:', error.message);
-      console.error('   Make sure config/topics.json exists and is valid JSON');
+      console.error('Failed to load topics.json:', error.message);
+      this.topics = [];
+    }
+
+    // Get model cache singleton
+    this.modelCache = getModelCache();
+
+    // Track initialization
+    this.initialized = false;
+    this.topicEmbeddings = null;
+  }
+
+  /**
+   * Initialize the semantic scorer (lazy loading)
+   * Generates embeddings for all topic examples
+   */
+  async initialize() {
+    if (this.initialized) {
+      return;
+    }
+
+    try {
+      // Get embedding model from cache
+      const model = await this.modelCache.getEmbeddingModel();
+
+      // Generate embeddings for all topics
+      this.topicEmbeddings = await Promise.all(
+        this.topics.map(async (topic) => {
+          // Combine all examples into a single representative text
+          const combinedText = topic.examples.join('. ');
+
+          // Generate embedding
+          const output = await model(combinedText, { pooling: 'mean', normalize: true });
+          const embedding = Array.from(output.data);
+
+          return {
+            id: topic.id,
+            name: topic.name,
+            weight: topic.weight,
+            tier: topic.tier,
+            embedding: embedding
+          };
+        })
+      );
+
+      this.initialized = true;
+      console.log(`✓ SemanticScorer initialized with ${this.topics.length} topics`);
+    } catch (error) {
+      console.error('Failed to initialize SemanticScorer:', error.message);
+      this.initialized = false;
       throw error;
     }
   }
 
   /**
-   * Compute average of multiple vectors
-   * @param {Array<Float32Array>} vectors - Array of embedding vectors
-   * @returns {Float32Array} - Averaged vector
+   * Score an article based on semantic similarity to topics
+   * @param {Object} article - Article object with title and description
+   * @returns {Promise<number>} Score between 0 and 1
    */
-  averageVectors(vectors) {
-    if (!vectors || vectors.length === 0) {
-      throw new Error('Cannot average empty vector array');
-    }
-
-    const dim = vectors[0].length;
-    const avg = new Float32Array(dim);
-
-    for (let i = 0; i < dim; i++) {
-      let sum = 0;
-      for (const vec of vectors) {
-        sum += vec[i];
+  async score(article) {
+    try {
+      // Lazy initialization
+      if (!this.initialized) {
+        await this.initialize();
       }
-      avg[i] = sum / vectors.length;
-    }
 
-    return avg;
+      // Combine title and description for article text
+      const articleText = `${article.title || ''} ${article.description || ''}`.trim();
+
+      if (!articleText) {
+        return 0;
+      }
+
+      // Get embedding for article
+      const model = await this.modelCache.getEmbeddingModel();
+      const output = await model(articleText, { pooling: 'mean', normalize: true });
+      const articleEmbedding = Array.from(output.data);
+
+      // Calculate similarity to each topic
+      const similarities = this.topicEmbeddings.map(topic => {
+        const similarity = this.cosineSimilarity(articleEmbedding, topic.embedding);
+
+        // Apply topic weight
+        const weightedSimilarity = similarity * topic.weight;
+
+        return {
+          topic: topic.name,
+          similarity: similarity,
+          weightedSimilarity: weightedSimilarity,
+          tier: topic.tier
+        };
+      });
+
+      // Get best match
+      const bestMatch = similarities.reduce((best, current) =>
+        current.weightedSimilarity > best.weightedSimilarity ? current : best
+      );
+
+      // Normalize score to 0-1 range
+      // Use best weighted similarity, clamped to max expected value
+      // Tier 1 topics (weight 2.0) can reach max ~2.0, normalize by this
+      const maxExpectedScore = 2.0;
+      const normalizedScore = Math.min(1.0, bestMatch.weightedSimilarity / maxExpectedScore);
+
+      return normalizedScore;
+    } catch (error) {
+      console.error('Error in SemanticScorer.score():', error.message);
+      return 0;
+    }
   }
 
   /**
-   * Compute cosine similarity between two vectors
-   * @param {Float32Array} a - First vector
-   * @param {Float32Array} b - Second vector
-   * @returns {number} - Similarity score between -1 and 1 (typically 0.2-0.9)
+   * Calculate cosine similarity between two vectors
+   * @param {Array} vecA - First vector
+   * @param {Array} vecB - Second vector
+   * @returns {number} Similarity score between -1 and 1
    */
-  cosineSimilarity(a, b) {
+  cosineSimilarity(vecA, vecB) {
+    if (vecA.length !== vecB.length) {
+      throw new Error('Vectors must have same length');
+    }
+
     let dotProduct = 0;
     let normA = 0;
     let normB = 0;
 
-    for (let i = 0; i < a.length; i++) {
-      dotProduct += a[i] * b[i];
-      normA += a[i] * a[i];
-      normB += b[i] * b[i];
+    for (let i = 0; i < vecA.length; i++) {
+      dotProduct += vecA[i] * vecB[i];
+      normA += vecA[i] * vecA[i];
+      normB += vecB[i] * vecB[i];
     }
 
-    return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
+    normA = Math.sqrt(normA);
+    normB = Math.sqrt(normB);
+
+    if (normA === 0 || normB === 0) {
+      return 0;
+    }
+
+    return dotProduct / (normA * normB);
   }
 
   /**
-   * Score an article based on semantic similarity and sentiment
-   * @param {Object} article - Article with title and description
-   * @returns {Object} - Score (0-1) and metadata
+   * Get detailed scoring breakdown for debugging
+   * @param {Object} article - Article object
+   * @returns {Promise<Object>} Detailed scoring info
    */
-  async score(article) {
+  async getDetailedScore(article) {
     if (!this.initialized) {
       await this.initialize();
     }
 
-    // Generate article embedding from title + description
-    const text = `${article.title}. ${article.description || ''}`.trim();
+    const articleText = `${article.title || ''} ${article.description || ''}`.trim();
 
-    if (!text || text.length < 10) {
-      // Article too short, return low score
+    if (!articleText) {
+      return { score: 0, matches: [] };
+    }
+
+    const model = await this.modelCache.getEmbeddingModel();
+    const output = await model(articleText, { pooling: 'mean', normalize: true });
+    const articleEmbedding = Array.from(output.data);
+
+    const similarities = this.topicEmbeddings.map(topic => {
+      const similarity = this.cosineSimilarity(articleEmbedding, topic.embedding);
+
       return {
-        score: 0.0,
-        metadata: {
-          topicMatch: 'none',
-          topicSimilarity: 0,
-          sentiment: 3,
-          sentimentLabel: 'NEUTRAL',
-          sentimentConfidence: 0,
-          reason: 'Article text too short'
-        }
+        topic: topic.name,
+        id: topic.id,
+        similarity: similarity,
+        weight: topic.weight,
+        weightedSimilarity: similarity * topic.weight,
+        tier: topic.tier
       };
-    }
-
-    const articleEmbResult = await this.embeddingModel(text, {
-      pooling: 'mean',
-      normalize: true
     });
-    const articleEmb = articleEmbResult.data;
 
-    // Find best matching topic
-    let maxScore = 0;
-    let bestTopic = null;
+    // Sort by weighted similarity
+    similarities.sort((a, b) => b.weightedSimilarity - a.weightedSimilarity);
 
-    for (const topic of this.topics) {
-      const similarity = this.cosineSimilarity(articleEmb, topic.embedding);
-      const weightedScore = similarity * topic.weight;
-
-      if (weightedScore > maxScore) {
-        maxScore = weightedScore;
-        bestTopic = topic;
-      }
-    }
-
-    // Normalize similarity from typical range [0.2, 0.9] to [0, 1]
-    // This makes scores more interpretable and comparable
-    const normalized = Math.max(0, Math.min(1, (maxScore - 0.2) / 0.7));
-
-    // Sentiment analysis (for metadata only - does NOT affect scoring)
-    // User requirement: Negative news is important and should not be filtered!
-    const sentimentResult = await this.sentimentModel(text);
-    const sentimentLabel = sentimentResult[0].label; // 'POSITIVE' or 'NEGATIVE'
-    const sentimentScore = sentimentResult[0].score;
-
-    // Convert sentiment to stars for metadata (does NOT modify score)
-    let stars = 3; // Default neutral
-
-    if (sentimentLabel === 'POSITIVE') {
-      stars = Math.min(5, Math.round(3 + (sentimentScore * 2))); // 3-5 stars
-    } else if (sentimentLabel === 'NEGATIVE') {
-      stars = Math.max(1, Math.round(3 - (sentimentScore * 2))); // 1-3 stars
-    }
-
-    // Final score WITHOUT sentiment adjustment
-    // Negative news is just as relevant as positive news
-    const finalScore = normalized;
+    const bestMatch = similarities[0];
+    const maxExpectedScore = 2.0;
+    const normalizedScore = Math.min(1.0, bestMatch.weightedSimilarity / maxExpectedScore);
 
     return {
-      score: finalScore,
-      metadata: {
-        topicMatch: bestTopic?.id || 'none',
-        topicSimilarity: maxScore,
-        sentiment: stars,
-        sentimentLabel: sentimentLabel,
-        sentimentConfidence: sentimentScore
-      }
+      score: normalizedScore,
+      matches: similarities.slice(0, 5), // Top 5 matches
+      bestMatch: bestMatch.topic
     };
   }
 }
