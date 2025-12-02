@@ -226,12 +226,10 @@ class GoogleNewsSource extends BaseSource {
         .filter(r => r.status === 'fulfilled')
         .flatMap(r => r.value);
 
-      // Filter topic articles by keywords
-      const filtered = this.filterTopicArticles(allTopicArticles, keywords);
+      // NO keyword filtering - let SemanticScorer handle relevance!
+      console.log(`Topic feeds: ${allTopicArticles.length} fetched (no keyword filtering, SemanticScorer will score)`);
 
-      console.log(`Topic feeds: ${allTopicArticles.length} fetched → ${filtered.length} after keyword filtering`);
-
-      return filtered;
+      return allTopicArticles;
     } catch (error) {
       console.error(`Error fetching topic feeds:`, error.message);
       return [];

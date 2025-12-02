@@ -246,7 +246,7 @@ class SourceManager {
    * @returns {Array<Object>} Diversified items
    */
   diversify(items) {
-    const targetArticles = 10; // Match newsService.maxItems default
+    const targetArticles = 100; // Allow many articles for SemanticScorer to filter
     const configMaxPerSource = this.config.diversification?.maxPerSource || 3;
     const minSources = this.config.diversification?.minSources || 2;
 

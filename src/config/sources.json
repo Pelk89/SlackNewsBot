@@ -12,13 +12,13 @@
         "country": "US",
 
         "keywordSearch": {
-          "enabled": true,
+          "enabled": false,
           "priority": 1
         },
 
         "queryBuilder": {
-          "enabled": true,
-          "dateRange": "7d",
+          "enabled": false,
+          "dateRange": "2d",
           "excludeTerms": ["recipe"],
           "exactPhraseMatching": true,
           "maxQueriesPerFetch": 5,
@@ -26,7 +26,7 @@
         },
 
         "topics": {
-          "enabled": false,
+          "enabled": true,
           "feeds": [
             {
               "name": "BUSINESS",
@@ -43,11 +43,11 @@
             {
               "name": "SCIENCE",
               "enabled": true,
-              "priority": 2,
+              "priority": 1,
               "url": "headlines/section/topic/SCIENCE"
             }
           ],
-          "maxArticlesPerTopic": 15
+          "maxArticlesPerTopic": 20
         }
       }
     },
@@ -423,7 +423,7 @@
     "deutsche-handwerks-zeitung": 0.8
   },
   "diversification": {
-    "maxPerSource": 3,
-    "minSources": 5
+    "maxPerSource": 50,
+    "minSources": 3
   }
 }
