@@ -1,9 +1,10 @@
 {
   "scoring": {
     "weights": {
-      "thematic": 0.4,
+      "thematic": 0.20,
+      "semantic": 0.20,
       "authority": 0.25,
-      "timeliness": 0.2,
+      "timeliness": 0.20,
       "innovation": 0.15
     },
     "thresholds": {

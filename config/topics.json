@@ -1,0 +1,212 @@
+{
+  "topics": [
+    {
+      "id": "autonomous-delivery",
+      "name": "Autonomous Delivery Systems",
+      "weight": 2.0,
+      "tier": 1,
+      "examples": [
+        "autonomous delivery robots",
+        "self-driving delivery vehicles",
+        "robotic last-mile delivery",
+        "automated parcel delivery",
+        "autonomous grocery delivery"
+      ]
+    },
+    {
+      "id": "ai-retail-automation",
+      "name": "AI in Retail Automation",
+      "weight": 2.0,
+      "tier": 1,
+      "examples": [
+        "artificial intelligence retail",
+        "machine learning store operations",
+        "AI-powered inventory management",
+        "automated checkout systems",
+        "smart shelf technology"
+      ]
+    },
+    {
+      "id": "sustainable-retail",
+      "name": "Sustainable Retail",
+      "weight": 2.0,
+      "tier": 1,
+      "examples": [
+        "sustainable grocery retail",
+        "eco-friendly packaging",
+        "carbon-neutral delivery",
+        "zero-waste supermarkets",
+        "green supply chain"
+      ]
+    },
+    {
+      "id": "payment-innovation",
+      "name": "Payment Innovation",
+      "weight": 2.0,
+      "tier": 1,
+      "examples": [
+        "contactless payment systems",
+        "mobile checkout technology",
+        "cashierless stores",
+        "digital payment platforms",
+        "biometric payment authentication"
+      ]
+    },
+    {
+      "id": "german-retail-leaders",
+      "name": "German Retail Leaders",
+      "weight": 2.0,
+      "tier": 1,
+      "examples": [
+        "REWE digital transformation",
+        "Edeka innovation strategy",
+        "Aldi technology adoption",
+        "Lidl automation projects",
+        "German supermarket chains"
+      ]
+    },
+    {
+      "id": "store-operations",
+      "name": "Store Operations Automation",
+      "weight": 1.0,
+      "tier": 2,
+      "examples": [
+        "warehouse automation systems",
+        "automated inventory tracking",
+        "robotic picking systems",
+        "smart logistics platforms",
+        "automated replenishment"
+      ]
+    },
+    {
+      "id": "customer-experience",
+      "name": "Customer Experience Innovation",
+      "weight": 1.0,
+      "tier": 2,
+      "examples": [
+        "personalized shopping experiences",
+        "augmented reality retail",
+        "smart shopping assistants",
+        "omnichannel customer journey",
+        "digital customer engagement"
+      ]
+    },
+    {
+      "id": "supply-chain-innovation",
+      "name": "Supply Chain Innovation",
+      "weight": 1.0,
+      "tier": 2,
+      "examples": [
+        "blockchain supply chain",
+        "IoT supply chain tracking",
+        "predictive supply chain analytics",
+        "automated warehouse management",
+        "real-time inventory visibility"
+      ]
+    },
+    {
+      "id": "quick-commerce",
+      "name": "Quick Commerce",
+      "weight": 1.0,
+      "tier": 2,
+      "examples": [
+        "instant grocery delivery",
+        "rapid commerce platforms",
+        "dark store operations",
+        "micro-fulfillment centers",
+        "15-minute delivery services"
+      ]
+    },
+    {
+      "id": "retail-technology",
+      "name": "Retail Technology",
+      "weight": 1.0,
+      "tier": 2,
+      "examples": [
+        "retail tech innovations",
+        "smart store technologies",
+        "digital shelf labels",
+        "computer vision retail",
+        "IoT connected stores"
+      ]
+    },
+    {
+      "id": "warehouse-logistics",
+      "name": "Warehouse & Logistics Automation",
+      "weight": 1.0,
+      "tier": 2,
+      "examples": [
+        "automated warehouse robotics",
+        "autonomous mobile robots",
+        "smart logistics systems",
+        "automated sorting systems",
+        "drone warehouse operations"
+      ]
+    },
+    {
+      "id": "german-retail-market",
+      "name": "German Retail Market",
+      "weight": 1.0,
+      "tier": 2,
+      "examples": [
+        "German grocery market trends",
+        "Einzelhandel innovation",
+        "German e-commerce growth",
+        "Lebensmittelhandel technology",
+        "German retail digital transformation"
+      ]
+    },
+    {
+      "id": "retail-formats",
+      "name": "Retail Store Formats",
+      "weight": 0.5,
+      "tier": 3,
+      "examples": [
+        "autonomous convenience stores",
+        "unmanned retail formats",
+        "smart supermarket concepts",
+        "hybrid store models",
+        "experimental retail formats"
+      ]
+    },
+    {
+      "id": "e-commerce-grocery",
+      "name": "E-commerce Grocery",
+      "weight": 0.5,
+      "tier": 3,
+      "examples": [
+        "online grocery shopping",
+        "e-grocery platforms",
+        "digital food retail",
+        "online supermarket services",
+        "grocery e-commerce technology"
+      ]
+    },
+    {
+      "id": "retail-innovation",
+      "name": "General Retail Innovation",
+      "weight": 0.5,
+      "tier": 3,
+      "examples": [
+        "retail innovation trends",
+        "future of retail",
+        "retail disruption",
+        "next-generation retail",
+        "retail transformation"
+      ]
+    },
+    {
+      "id": "industry-segments",
+      "name": "Industry Segments",
+      "weight": 0.5,
+      "tier": 3,
+      "examples": [
+        "food and beverage retail",
+        "grocery industry trends",
+        "supermarket sector",
+        "convenience store innovation",
+        "retail industry developments"
+      ]
+    }
+  ]
+}
