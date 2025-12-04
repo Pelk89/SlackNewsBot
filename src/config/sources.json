@@ -12,12 +12,12 @@
         "country": "US",
 
         "keywordSearch": {
-          "enabled": false,
+          "enabled": true,
           "priority": 1
         },
 
         "queryBuilder": {
-          "enabled": false,
+          "enabled": true,
           "dateRange": "2d",
           "excludeTerms": ["recipe"],
           "exactPhraseMatching": true,
@@ -26,11 +26,11 @@
         },
 
         "topics": {
-          "enabled": true,
+          "enabled": false,
           "feeds": [
             {
               "name": "BUSINESS",
-              "enabled": true,
+              "enabled": false,
               "priority": 1,
               "url": "headlines/section/topic/BUSINESS"
             },
@@ -42,7 +42,7 @@
             },
             {
               "name": "SCIENCE",
-              "enabled": true,
+              "enabled": false,
               "priority": 1,
               "url": "headlines/section/topic/SCIENCE"
             }
